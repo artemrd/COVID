@@ -27,10 +27,9 @@ namespace COVID
         // Population
         public double P { get; }
 
-        public double[] Calculate(double[] timePoints, List<double> values)
+        public void Calculate(double[] timePoints, double[] results, List<double> valuesCache)
         {
-            values.Clear();
-            var results = new double[timePoints.Length];
+            valuesCache.Clear();
 
             var currentPointIndex = 0;
             var currentPoint = timePoints[currentPointIndex];
@@ -38,7 +37,7 @@ namespace COVID
             var i = 0;
             var rShift = (int)Math.Round(R / dt);
             double value = F0;
-            values.Add(value);
+            valuesCache.Add(value);
             while (currentPointIndex < timePoints.Length)
             {
                 double t = i * dt;
@@ -58,14 +57,12 @@ namespace COVID
                 }
 
                 int t_r = i - rShift;
-                double t_rValue = t_r < 0 ? 0 : values[t_r];
+                double t_rValue = t_r < 0 ? 0 : valuesCache[t_r];
                 value = value + C * (value - t_rValue) * (P - value) * dt;
-                values.Add(value);
+                valuesCache.Add(value);
 
                 i++;
             }
-
-            return results;
         }
     }
 }

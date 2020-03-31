@@ -38,6 +38,8 @@
             // 
             // chart
             // 
+            this.chart.BorderlineColor = System.Drawing.Color.Gray;
+            this.chart.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
             chartArea1.Name = "ChartArea1";
             this.chart.ChartAreas.Add(chartArea1);
             legend1.Name = "Legend1";
