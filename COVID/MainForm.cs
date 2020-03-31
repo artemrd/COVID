@@ -20,6 +20,7 @@ namespace COVID
 
             Task.Run(() =>
             {
+                // Load data.
                 DateTime startDate = DateTime.MinValue;
                 var actualDataList = new List<double>();
                 using (var actualDataStream = new System.IO.StreamReader(@"COVID.txt"))
@@ -51,17 +52,19 @@ namespace COVID
                 }
                 var results = new double[timePoints.Length];
 
-                var values = new List<double>();
+                var valuesCache = new List<double>();
 
+                // Explore parameters space.
                 var f0Range = new ParameterRange(0.2, 0.3, 0.01);
                 var rRange = new ParameterRange(10, 20, 1);
                 var cRange = new ParameterRange(1E-6, 1E-5, 1E-6);
                 var pRange = new ParameterRange(10000, 100000, 1000);
 
-                var model = FindBestModel(null, f0Range, rRange, cRange, pRange, timePoints, results, actualData, values);
+                var model = FindBestModel(null, f0Range, rRange, cRange, pRange, timePoints, results, actualData, valuesCache);
 
                 ConsoleWriteLine();
 
+                // Fine tuning.
                 for (int i = 0; i < 1; i++)
                 {
                     f0Range = new ParameterRange(model.F0 - f0Range.Step, model.F0 + f0Range.Step, f0Range.Step / 10);
@@ -69,21 +72,22 @@ namespace COVID
                     cRange = new ParameterRange(model.C - cRange.Step, model.C + cRange.Step, cRange.Step / 10);
                     pRange = new ParameterRange(model.P - pRange.Step, model.P + pRange.Step, pRange.Step / 10);
 
-                    model = FindBestModel(model, f0Range, rRange, cRange, pRange, timePoints, results, actualData, values);
+                    model = FindBestModel(model, f0Range, rRange, cRange, pRange, timePoints, results, actualData, valuesCache);
 
                     ConsoleWriteLine();
                 }
 
-                var error = CalculateError(model, timePoints, results, actualData, values);
+                var error = CalculateError(model, timePoints, results, actualData, valuesCache);
 
-                timePoints = new double[actualData.Length * 2];
+                // Extrapolate 3 months.
+                timePoints = new double[actualData.Length + 90];
                 for (int i = 0; i < timePoints.Length; i++)
                 {
                     timePoints[i] = i;
                 }
                 results = new double[timePoints.Length];
 
-                model.Calculate(timePoints, results, values);
+                model.Calculate(timePoints, results, valuesCache);
                 int turningPoint = -1;
                 for (int i = 0; i < timePoints.Length; i++)
                 {
@@ -146,23 +150,23 @@ namespace COVID
 
         private void ConsoleWriteLine(string text)
         {
+            var writeDelegate = new Action(() =>
+            {
+                consoleTextBox.AppendText(text);
+                consoleTextBox.AppendText("\r\n");
+            });
+
             if (consoleTextBox.InvokeRequired)
             {
-                consoleTextBox.Invoke(new Action<string>(ConsoleWriteLineDelegate), new object[] { text });
+                consoleTextBox.Invoke(writeDelegate);
             }
             else
             {
-                ConsoleWriteLineDelegate(text);
+                writeDelegate();
             }
         }
 
-        private void ConsoleWriteLineDelegate(string text)
-        {
-            consoleTextBox.AppendText(text);
-            consoleTextBox.AppendText("\r\n");
-        }
-
-        void PopulateChart(double[] actualData, double[] modelData, DateTime startDate, int turningPoint)
+        private void PopulateChart(double[] actualData, double[] modelData, DateTime startDate, int turningPoint)
         {
             chart.Series.Clear();
 
@@ -200,12 +204,12 @@ namespace COVID
             }
         }
 
-        Model FindBestModel(Model bestModel, ParameterRange f0Range, ParameterRange rRange, ParameterRange cRange, ParameterRange pRange, double[] timePoints, double[] results, double[] actualData, List<double> values)
+        private Model FindBestModel(Model bestModel, ParameterRange f0Range, ParameterRange rRange, ParameterRange cRange, ParameterRange pRange, double[] timePoints, double[] results, double[] actualData, List<double> valuesCache)
         {
             double bestError = 0;
             if (bestModel != null)
             {
-                bestError = CalculateError(bestModel, timePoints, results, actualData, values);
+                bestError = CalculateError(bestModel, timePoints, results, actualData, valuesCache);
             }
             for (var f0 = f0Range.Min; f0 <= f0Range.Max; f0 += f0Range.Step)
             {
@@ -216,7 +220,7 @@ namespace COVID
                         for (var p = pRange.Min; p <= pRange.Max; p += pRange.Step)
                         {
                             var model = new Model(f0, r, c, p);
-                            var error = CalculateError(model, timePoints, results, actualData, values);
+                            var error = CalculateError(model, timePoints, results, actualData, valuesCache);
                             if (bestModel == null || bestError > error)
                             {
                                 ConsoleWriteLine($"Error: {error}, F0: {model.F0}, R: {model.R}, C: {model.C}, P: {model.P}, R * C * P: {model.R * model.C * model.P}");
@@ -230,9 +234,9 @@ namespace COVID
             return bestModel;
         }
 
-        static double CalculateError(Model model, double[] timePoints, double[] results, double[] actualData, List<double> values)
+        private double CalculateError(Model model, double[] timePoints, double[] results, double[] actualData, List<double> valuesCache)
         {
-            model.Calculate(timePoints, results, values);
+            model.Calculate(timePoints, results, valuesCache);
             double error = 0;
             for (int i = 0; i < results.Length; i++)
             {
