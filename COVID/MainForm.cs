@@ -55,10 +55,10 @@ namespace COVID
                 var valuesCache = new List<double>();
 
                 // Explore parameters space.
-                var f0Range = new ParameterRange(0.2, 0.3, 0.01);
-                var rRange = new ParameterRange(10, 20, 1);
-                var cRange = new ParameterRange(1E-6, 1E-5, 1E-6);
-                var pRange = new ParameterRange(10000, 100000, 1000);
+                var f0Range = new ParameterRange(0.05, 0.15, 0.01);
+                var rRange = new ParameterRange(10, 30, 1);
+                var cRange = new ParameterRange(1E-6, 2E-5, 1E-6);
+                var pRange = new ParameterRange(10000, 50000, 1000);
 
                 var model = FindBestModel(null, f0Range, rRange, cRange, pRange, timePoints, results, actualData, valuesCache);
 
@@ -91,17 +91,18 @@ namespace COVID
                 int turningPoint = -1;
                 for (int i = 0; i < timePoints.Length; i++)
                 {
-                    string d2 = "";
+                    string d2FLabel = string.Empty;
                     if (i > 0 && i < results.Length - 1)
                     {
-                        if (results[i - 1] + results[i + 1] - 2 * results[i] > 0)
+                        double d2F = results[i - 1] + results[i + 1] - 2 * results[i];
+                        if (d2F > 0)
                         {
-                            d2 = "+";
+                            d2FLabel = "+";
                             turningPoint = -1;
                         }
-                        else if (results[i - 1] + results[i + 1] - 2 * results[i] < 0)
+                        else if (d2F < 0)
                         {
-                            d2 = "-";
+                            d2FLabel = "-";
                             if (turningPoint < 0)
                             {
                                 turningPoint = i;
@@ -109,27 +110,26 @@ namespace COVID
                         }
                     }
 
-                    string ad2 = "";
+                    string ad2FLabel = string.Empty;
                     if (i > 0 && i < actualData.Length - 1)
                     {
-                        if (actualData[i - 1] + actualData[i + 1] - 2 * actualData[i] > 0)
+                        double ad2F = actualData[i - 1] + actualData[i + 1] - 2 * actualData[i];
+                        if (ad2F > 0)
                         {
-                            ad2 = "+";
+                            ad2FLabel = "+";
                         }
-                        else if (actualData[i - 1] + actualData[i + 1] - 2 * actualData[i] < 0)
+                        else if (ad2F < 0)
                         {
-                            ad2 = "-";
+                            ad2FLabel = "-";
                         }
                     }
 
+                    var actualDataPoint = string.Empty;
                     if (i < actualData.Length)
                     {
-                        ConsoleWriteLine($"{startDate.AddDays(i).ToShortDateString(),-10} {timePoints[i],-8} {results[i],-24} {Math.Round(results[i]),-8} {d2,-1} {actualData[i],-8} {ad2}");
+                        actualDataPoint = actualData[i].ToString();
                     }
-                    else
-                    {
-                        ConsoleWriteLine($"{startDate.AddDays(i).ToShortDateString(),-10} {timePoints[i],-8} {results[i],-24} {Math.Round(results[i]),-8} {d2,-1} {"",-8} {ad2}");
-                    }
+                    ConsoleWriteLine($"{startDate.AddDays(i).ToShortDateString(),-10} {timePoints[i],-8} {results[i],-24} {Math.Round(results[i]),-8} {d2FLabel,-1} {actualDataPoint,-8} {ad2FLabel}");
                 }
                 ConsoleWriteLine();
                 ConsoleWriteLine($"Error: {error}");
@@ -201,6 +201,7 @@ namespace COVID
                 turningPointSeries.BorderWidth = 7;
                 var point = turningPointSeries.Points[turningPointSeries.Points.AddXY(turningPoint, modelData[turningPoint])];
                 point.Label = point.AxisLabel = startDate.AddDays(turningPoint).ToShortDateString();
+                turningPointSeries.SmartLabelStyle.MovingDirection = LabelAlignmentStyles.Right;
             }
         }
 
