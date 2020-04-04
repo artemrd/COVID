@@ -92,7 +92,7 @@ namespace COVID
 
         public string ToString(string separator)
         {
-            return $"F0: {F0}{separator}R: {R}{separator}OrderDate: {this.StartDate.AddDays(OrderDay).ToShortDateString()} ({OrderDay}){separator}C1: {C1}{separator}C2: {C2}{separator}P1: {P1}{separator}P2: {P2}{separator}R * C1 * P1: {R * C1 * P1}{separator}R * C2 * P2: {R * C2 * P2}";
+            return $"F0: {F0}{separator}R: {R}{separator}OrderDate: {this.StartDate.AddDays(Math.Round(OrderDay)).ToShortDateString()} ({OrderDay}){separator}C1: {C1}{separator}C2: {C2}{separator}P1: {P1}{separator}P2: {P2}{separator}R * C1 * P1: {R * C1 * P1}{separator}R * C2 * P2: {R * C2 * P2}";
         }
     }
 }

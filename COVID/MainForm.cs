@@ -327,8 +327,9 @@ namespace COVID
                     cRange.GetRandom(rnd),
                     pRange.GetRandom(rnd),
                     pRange.GetRandom(rnd));
-                    //p,
-                    //p);
+                //p,
+                //p);
+
                 var error = CalculateError(model, timePoints, results, actualData, valuesCache);
                 if (bestModel == null || bestError > error)
                 {
@@ -340,7 +341,7 @@ namespace COVID
                     do
                     {
                         cont = false;
-                        foreach (var nearbyModel in GetNearbyModels(bestModel))
+                        foreach (var nearbyModel in GetNearbyModels(model))
                         {
                             var nearbyError = CalculateError(nearbyModel, timePoints, results, actualData, valuesCache);
                             if (bestError > nearbyError)
