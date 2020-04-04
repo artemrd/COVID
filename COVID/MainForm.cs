@@ -9,42 +9,85 @@ namespace COVID
 {
     public partial class MainForm : Form
     {
+        volatile bool stop = false;
+        DateTime startDate;
+        double[] actualData;
+        ParameterRange f0Range;
+        ParameterRange rRange;
+        ParameterRange orderDayRange;
+        ParameterRange cRange;
+        ParameterRange pRange;
+        Model bestModel;
+
         public MainForm()
         {
             InitializeComponent();
         }
 
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            // Load data.
+            var actualDataList = new List<double>();
+            using (var actualDataStream = new System.IO.StreamReader(@"COVID.txt"))
+            {
+                string line;
+                while ((line = actualDataStream.ReadLine()) != null)
+                {
+                    var tokens = line.Split('\t');
+                    if (tokens.Length == 2 && !string.IsNullOrEmpty(tokens[1]))
+                    {
+                        actualDataList.Add(Convert.ToDouble(tokens[1]));
+                        if (actualDataList.Count == 1)
+                        {
+                            startDate = DateTime.Parse(tokens[0]);
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+            actualData = actualDataList.ToArray();
+
+            //double missFactor = (6604.0 / 6585) - 1;
+            double missFactor = 0;
+            for (int i = actualData.Length - 1; i >= 0; i--)
+            {
+                actualData[i] = actualData[i] * (1 + missFactor);
+                missFactor = missFactor * missFactor;
+            }
+
+            var orderDate = DateTime.Parse("03/23/2020");
+            var orderDay = (orderDate - startDate).TotalDays;
+
+            f0Range = new ParameterRange(0.09, 0.15, 0.01);
+            rRange = new ParameterRange(15, 30, 1);
+            orderDayRange = new ParameterRange(orderDay - 2, orderDay + 7, 1);
+            cRange = new ParameterRange(1E-6, 2E-5, 1E-6);
+            pRange = new ParameterRange(10000, 50000, 2000);
+
+            f0Range.ToView(f0MinTextBox, f0MaxTextBox, f0StepTextBox);
+            rRange.ToView(rMinTextBox, rMaxTextBox, rStepTextBox);
+            orderDayRange.ToView(oMinTextBox, oMaxTextBox, oStepTextBox);
+            cRange.ToView(cMinTextBox, cMaxTextBox, cStepTextBox);
+            pRange.ToView(pMinTextBox, pMaxTextBox, pStepTextBox);
+        }
+
         private void calculateButton_Click(object sender, EventArgs e)
         {
+            stop = false;
             calculateButton.Enabled = false;
+            consoleTextBox.Clear();
+
+            f0Range = new ParameterRange(f0MinTextBox, f0MaxTextBox, f0StepTextBox);
+            rRange = new ParameterRange(rMinTextBox, rMaxTextBox, rStepTextBox);
+            orderDayRange = new ParameterRange(oMinTextBox, oMaxTextBox, oStepTextBox);
+            cRange = new ParameterRange(cMinTextBox, cMaxTextBox, cStepTextBox);
+            pRange = new ParameterRange(pMinTextBox, pMaxTextBox, pStepTextBox);
 
             Task.Run(() =>
             {
-                // Load data.
-                DateTime startDate = DateTime.MinValue;
-                var actualDataList = new List<double>();
-                using (var actualDataStream = new System.IO.StreamReader(@"COVID.txt"))
-                {
-                    string line;
-                    while ((line = actualDataStream.ReadLine()) != null)
-                    {
-                        var tokens = line.Split('\t');
-                        if (tokens.Length == 2 && !string.IsNullOrEmpty(tokens[1]))
-                        {
-                            actualDataList.Add(Convert.ToDouble(tokens[1]));
-                            if (actualDataList.Count == 1)
-                            {
-                                startDate = DateTime.Parse(tokens[0]);
-                            }
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                }
-                var actualData = actualDataList.ToArray();
-
                 var timePoints = new double[actualData.Length];
                 for (int i = 0; i < timePoints.Length; i++)
                 {
@@ -55,24 +98,21 @@ namespace COVID
                 var valuesCache = new List<double>();
 
                 // Explore parameters space.
-                var f0Range = new ParameterRange(0.05, 0.15, 0.01);
-                var rRange = new ParameterRange(10, 30, 1);
-                var cRange = new ParameterRange(1E-6, 2E-5, 1E-6);
-                var pRange = new ParameterRange(10000, 50000, 1000);
-
-                var model = FindBestModel(null, f0Range, rRange, cRange, pRange, timePoints, results, actualData, valuesCache);
+                // var model = FindBestModel(timePoints, results, actualData, valuesCache);
+                var model = FindBestModelRandom(timePoints, results, actualData, valuesCache);
 
                 ConsoleWriteLine();
 
                 // Fine tuning.
-                for (int i = 0; i < 1; i++)
+                for (int i = 0; i < 0; i++)
                 {
                     f0Range = new ParameterRange(model.F0 - f0Range.Step, model.F0 + f0Range.Step, f0Range.Step / 10);
                     rRange = new ParameterRange(model.R - rRange.Step, model.R + rRange.Step, rRange.Step / 10);
-                    cRange = new ParameterRange(model.C - cRange.Step, model.C + cRange.Step, cRange.Step / 10);
-                    pRange = new ParameterRange(model.P - pRange.Step, model.P + pRange.Step, pRange.Step / 10);
+                    orderDayRange = new ParameterRange(model.OrderDay - orderDayRange.Step, model.OrderDay + orderDayRange.Step, orderDayRange.Step / 10);
+                    cRange = new ParameterRange(Math.Min(model.C1, model.C2) - cRange.Step, Math.Max(model.C1, model.C2) + cRange.Step, cRange.Step / 10);
+                    pRange = new ParameterRange(Math.Min(model.P1, model.P2) - pRange.Step, Math.Max(model.P1, model.P2) + pRange.Step, pRange.Step / 10);
 
-                    model = FindBestModel(model, f0Range, rRange, cRange, pRange, timePoints, results, actualData, valuesCache);
+                    model = FindBestModel(timePoints, results, actualData, valuesCache);
 
                     ConsoleWriteLine();
                 }
@@ -80,7 +120,7 @@ namespace COVID
                 var error = CalculateError(model, timePoints, results, actualData, valuesCache);
 
                 // Extrapolate 3 months.
-                timePoints = new double[actualData.Length + 90];
+                timePoints = new double[actualData.Length + 60];
                 for (int i = 0; i < timePoints.Length; i++)
                 {
                     timePoints[i] = i;
@@ -133,13 +173,9 @@ namespace COVID
                 }
                 ConsoleWriteLine();
                 ConsoleWriteLine($"Error: {error}");
-                ConsoleWriteLine($"F0: {model.F0}");
-                ConsoleWriteLine($"R: {model.R}");
-                ConsoleWriteLine($"C: {model.C}");
-                ConsoleWriteLine($"P: {model.P}");
-                ConsoleWriteLine($"R * C * P: {model.R * model.C * model.P}");
+                ConsoleWriteLine(model.ToString("\r\n"));
 
-                chart.Invoke(new Action<double[], double[], DateTime, int>(PopulateChart), new object[] { actualData, results, startDate, turningPoint });
+                chart.Invoke(new Action<double[], double[], DateTime, int, double>(PopulateChart), new object[] { actualData, results, startDate, turningPoint, model.OrderDay });
             });
         }
 
@@ -166,7 +202,7 @@ namespace COVID
             }
         }
 
-        private void PopulateChart(double[] actualData, double[] modelData, DateTime startDate, int turningPoint)
+        private void PopulateChart(double[] actualData, double[] modelData, DateTime startDate, int turningPoint, double orderDay)
         {
             chart.Series.Clear();
 
@@ -201,32 +237,61 @@ namespace COVID
                 turningPointSeries.BorderWidth = 7;
                 var point = turningPointSeries.Points[turningPointSeries.Points.AddXY(turningPoint, modelData[turningPoint])];
                 point.Label = point.AxisLabel = startDate.AddDays(turningPoint).ToShortDateString();
-                turningPointSeries.SmartLabelStyle.MovingDirection = LabelAlignmentStyles.Right;
+            }
+
+            {
+                var orderDaySeries = chart.Series.Add("Order");
+                orderDaySeries.ChartType = SeriesChartType.Point;
+                orderDaySeries.Color = Color.DarkCyan;
+                orderDaySeries.BorderWidth = 7;
+                var iOrderDay = (int)Math.Round(orderDay);
+                var point = orderDaySeries.Points[orderDaySeries.Points.AddXY(iOrderDay, modelData[iOrderDay])];
+                point.Label = point.AxisLabel = startDate.AddDays(iOrderDay).ToShortDateString();
             }
         }
 
-        private Model FindBestModel(Model bestModel, ParameterRange f0Range, ParameterRange rRange, ParameterRange cRange, ParameterRange pRange, double[] timePoints, double[] results, double[] actualData, List<double> valuesCache)
+        private Model FindBestModel(
+            double[] timePoints,
+            double[] results,
+            double[] actualData,
+            List<double> valuesCache)
         {
             double bestError = 0;
             if (bestModel != null)
             {
                 bestError = CalculateError(bestModel, timePoints, results, actualData, valuesCache);
+                ConsoleWriteLine($"Error: {bestError}, {bestModel}");
             }
             for (var f0 = f0Range.Min; f0 <= f0Range.Max; f0 += f0Range.Step)
             {
+                ConsoleWriteLine($"F0: {f0}");
                 for (var r = rRange.Min; r <= rRange.Max; r += rRange.Step)
                 {
-                    for (var c = cRange.Min; c <= cRange.Max; c += cRange.Step)
+                    for (var orderDay = orderDayRange.Min; orderDay <= orderDayRange.Max; orderDay += orderDayRange.Step)
                     {
-                        for (var p = pRange.Min; p <= pRange.Max; p += pRange.Step)
+                        for (var c1 = cRange.Min; c1 <= cRange.Max; c1 += cRange.Step)
                         {
-                            var model = new Model(f0, r, c, p);
-                            var error = CalculateError(model, timePoints, results, actualData, valuesCache);
-                            if (bestModel == null || bestError > error)
+                            for (var c2 = cRange.Min; c2 <= cRange.Max; c2 += cRange.Step)
                             {
-                                ConsoleWriteLine($"Error: {error}, F0: {model.F0}, R: {model.R}, C: {model.C}, P: {model.P}, R * C * P: {model.R * model.C * model.P}");
-                                bestModel = model;
-                                bestError = error;
+                                for (var p1 = pRange.Min; p1 <= pRange.Max; p1 += pRange.Step)
+                                {
+                                    // var p2 = p1;
+                                    for (var p2 = pRange.Min; p2 <= pRange.Max; p2 += pRange.Step)
+                                    {
+                                        var model = new Model(f0, r, startDate, orderDay, c1, c2, p1, p2);
+                                        var error = CalculateError(model, timePoints, results, actualData, valuesCache);
+                                        if (bestModel == null || bestError > error)
+                                        {
+                                            ConsoleWriteLine($"Error: {error}, {model}");
+                                            bestModel = model;
+                                            bestError = error;
+                                        }
+                                        if (stop)
+                                        {
+                                            return bestModel;
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -235,16 +300,112 @@ namespace COVID
             return bestModel;
         }
 
+        private Model FindBestModelRandom(
+            double[] timePoints,
+            double[] results,
+            double[] actualData,
+            List<double> valuesCache)
+        {
+            double bestError = 0;
+            if (bestModel != null)
+            {
+                bestError = CalculateError(bestModel, timePoints, results, actualData, valuesCache);
+                ConsoleWriteLine($"Error: {bestError}, {bestModel}");
+            }
+
+            var rnd = new Random();
+
+            while (!stop)
+            {
+                //var p = pRange.GetRandom(rnd);
+                var model = new Model(
+                    f0Range.GetRandom(rnd),
+                    rRange.GetRandom(rnd),
+                    startDate,
+                    orderDayRange.GetRandom(rnd),
+                    cRange.GetRandom(rnd),
+                    cRange.GetRandom(rnd),
+                    pRange.GetRandom(rnd),
+                    pRange.GetRandom(rnd));
+                    //p,
+                    //p);
+                var error = CalculateError(model, timePoints, results, actualData, valuesCache);
+                if (bestModel == null || bestError > error)
+                {
+                    bestModel = model;
+                    bestError = error;
+                    ConsoleWriteLine($"Error: {bestError}, {bestModel}");
+
+                    bool cont;
+                    do
+                    {
+                        cont = false;
+                        foreach (var nearbyModel in GetNearbyModels(bestModel))
+                        {
+                            var nearbyError = CalculateError(nearbyModel, timePoints, results, actualData, valuesCache);
+                            if (bestError > nearbyError)
+                            {
+                                bestModel = nearbyModel;
+                                bestError = nearbyError;
+                                ConsoleWriteLine($"Error: {bestError}, {bestModel}");
+                                cont = true;
+                            }
+                        }
+                    }
+                    while (cont);
+                }
+            }
+
+            return bestModel;
+        }
+
+        private IEnumerable<Model> GetNearbyModels(Model model)
+        {
+            var dF0 = model.F0 / 100;
+            yield return new Model(model.F0 + dF0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2);
+            yield return new Model(model.F0 - dF0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2);
+
+            var dR = model.R / 100;
+            yield return new Model(model.F0, model.R + dR, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2);
+            yield return new Model(model.F0, model.R - dR, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2);
+
+            var dO = model.OrderDay / 100;
+            yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay + dO, model.C1, model.C2, model.P1, model.P2);
+            yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay - dO, model.C1, model.C2, model.P1, model.P2);
+
+            var dC1 = model.C1 / 100;
+            yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1 + dC1, model.C2, model.P1, model.P2);
+            yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1 - dC1, model.C2, model.P1, model.P2);
+
+            var dC2 = model.C2 / 100;
+            yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2 + dC2, model.P1, model.P2);
+            yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2 - dC2, model.P1, model.P2);
+
+            var dP1 = model.P1 / 100;
+            yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 + dP1, model.P2);
+            yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 - dP1, model.P2);
+
+            var dP2 = model.P2 / 100;
+            yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2 + dP2);
+            yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2 - dP2);
+        }
+
         private double CalculateError(Model model, double[] timePoints, double[] results, double[] actualData, List<double> valuesCache)
         {
             model.Calculate(timePoints, results, valuesCache);
             double error = 0;
-            for (int i = 0; i < results.Length; i++)
+            for (int i = 0; i < actualData.Length; i++)
             {
                 var diff = results[i] - actualData[i];
                 error += diff * diff;
             }
             return error;
+        }
+
+        private void stopButton_Click(object sender, EventArgs e)
+        {
+            stop = true;
+            calculateButton.Enabled = true;
         }
     }
 }
