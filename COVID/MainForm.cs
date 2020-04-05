@@ -336,7 +336,9 @@ namespace COVID
                     bestModel = model;
                     bestError = error;
                     ConsoleWriteLine($"Error: {bestError}, {bestModel}");
+                }
 
+                {
                     bool cont;
                     do
                     {
