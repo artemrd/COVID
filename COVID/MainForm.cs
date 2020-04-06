@@ -61,11 +61,11 @@ namespace COVID
             var orderDate = DateTime.Parse("03/23/2020");
             var orderDay = (orderDate - startDate).TotalDays;
 
-            f0Range = new ParameterRange(0.09, 0.15, 0.01);
+            f0Range = new ParameterRange(0.05, 0.2, 0.01);
             rRange = new ParameterRange(15, 30, 1);
             orderDayRange = new ParameterRange(orderDay - 2, orderDay + 7, 1);
             cRange = new ParameterRange(1E-6, 2E-5, 1E-6);
-            pRange = new ParameterRange(10000, 50000, 2000);
+            pRange = new ParameterRange(10000, 30000, 2000);
 
             f0Range.ToView(f0MinTextBox, f0MaxTextBox, f0StepTextBox);
             rRange.ToView(rMinTextBox, rMaxTextBox, rStepTextBox);
@@ -172,6 +172,7 @@ namespace COVID
                     ConsoleWriteLine($"{startDate.AddDays(i).ToShortDateString(),-10} {timePoints[i],-8} {results[i],-24} {Math.Round(results[i]),-8} {d2FLabel,-1} {actualDataPoint,-8} {ad2FLabel}");
                 }
                 ConsoleWriteLine();
+                ConsoleWriteLine(DateTime.Now.ToShortDateString());
                 ConsoleWriteLine($"Error: {error}");
                 ConsoleWriteLine(model.ToString("\r\n"));
 
@@ -338,6 +339,7 @@ namespace COVID
                     ConsoleWriteLine($"Error: {bestError}, {bestModel}");
                 }
 
+                if (error < bestError * 2)
                 {
                     bool cont;
                     do
@@ -364,31 +366,33 @@ namespace COVID
 
         private IEnumerable<Model> GetNearbyModels(Model model)
         {
-            var dF0 = model.F0 / 100;
+            double factor = 100;
+
+            var dF0 = model.F0 / factor;
             yield return new Model(model.F0 + dF0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2);
             yield return new Model(model.F0 - dF0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2);
 
-            var dR = model.R / 100;
+            var dR = model.R / factor;
             yield return new Model(model.F0, model.R + dR, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2);
             yield return new Model(model.F0, model.R - dR, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2);
 
-            var dO = model.OrderDay / 100;
+            var dO = model.OrderDay / factor;
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay + dO, model.C1, model.C2, model.P1, model.P2);
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay - dO, model.C1, model.C2, model.P1, model.P2);
 
-            var dC1 = model.C1 / 100;
+            var dC1 = model.C1 / factor;
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1 + dC1, model.C2, model.P1, model.P2);
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1 - dC1, model.C2, model.P1, model.P2);
 
-            var dC2 = model.C2 / 100;
+            var dC2 = model.C2 / factor;
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2 + dC2, model.P1, model.P2);
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2 - dC2, model.P1, model.P2);
 
-            var dP1 = model.P1 / 100;
+            var dP1 = model.P1 / factor;
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 + dP1, model.P2);
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 - dP1, model.P2);
 
-            var dP2 = model.P2 / 100;
+            var dP2 = model.P2 / factor;
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2 + dP2);
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2 - dP2);
         }
