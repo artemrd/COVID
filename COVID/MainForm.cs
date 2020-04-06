@@ -401,9 +401,9 @@ namespace COVID
         {
             model.Calculate(timePoints, results, valuesCache);
             double error = 0;
-            for (int i = 0; i < actualData.Length; i++)
+            for (int i = 1; i < actualData.Length; i++)
             {
-                var diff = results[i] - actualData[i];
+                var diff = (results[i] - results[i - 1]) - (actualData[i] - actualData[i - 1]);
                 error += diff * diff;
             }
             return error;
