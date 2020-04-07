@@ -12,13 +12,23 @@ namespace COVID
         volatile bool stop = false;
         DateTime startDate;
         double[] actualData;
+        Model bestModel;
+        Random rnd = new Random();
+
+        // Model parameters.
         ParameterRange f0Range;
         ParameterRange rRange;
         ParameterRange orderDayRange;
         ParameterRange cRange;
         ParameterRange pRange;
-        Model bestModel;
-        Random rnd = new Random();
+        
+        // Training parameters.
+        // Use the same value for P1 and P2.
+        bool sameP;
+        // Last days are underreported, skip some.
+        int skip;
+        // Average over windowSize days.
+        int windowSize;
 
         public MainForm()
         {
@@ -66,29 +76,47 @@ namespace COVID
             rRange = new ParameterRange(15, 30);
             orderDayRange = new ParameterRange(orderDay, orderDay + 10);
             cRange = new ParameterRange(1E-6, 2E-5);
-            pRange = new ParameterRange(10000, 30000);
+            pRange = new ParameterRange(10000, 40000);
+            
+            sameP = true;
+            skip = 2;
+            windowSize = 3;
 
             f0Range.ToView(f0MinTextBox, f0MaxTextBox);
             rRange.ToView(rMinTextBox, rMaxTextBox);
             orderDayRange.ToView(oMinTextBox, oMaxTextBox);
             cRange.ToView(cMinTextBox, cMaxTextBox);
             pRange.ToView(pMinTextBox, pMaxTextBox);
+            
+            samePCheckBox.Checked = sameP;
+            skipTextBox.Text = skip.ToString();
+            windowTextBox.Text = windowSize.ToString();
 
-            stopButton.Enabled = false;
+            SetStop(true);
         }
 
         private void startButton_Click(object sender, EventArgs e)
         {
-            stop = false;
-            startButton.Enabled = false;
-            stopButton.Enabled = true;
+            SetStop(false);
             consoleTextBox.Clear();
 
-            f0Range = new ParameterRange(f0MinTextBox, f0MaxTextBox);
-            rRange = new ParameterRange(rMinTextBox, rMaxTextBox);
-            orderDayRange = new ParameterRange(oMinTextBox, oMaxTextBox);
-            cRange = new ParameterRange(cMinTextBox, cMaxTextBox);
-            pRange = new ParameterRange(pMinTextBox, pMaxTextBox);
+            try
+            {
+                f0Range = new ParameterRange(f0MinTextBox, f0MaxTextBox);
+                rRange = new ParameterRange(rMinTextBox, rMaxTextBox);
+                orderDayRange = new ParameterRange(oMinTextBox, oMaxTextBox);
+                cRange = new ParameterRange(cMinTextBox, cMaxTextBox);
+                pRange = new ParameterRange(pMinTextBox, pMaxTextBox);
+                
+                sameP = samePCheckBox.Checked;
+                skip = Convert.ToInt32(skipTextBox.Text);
+                windowSize = Convert.ToInt32(windowTextBox.Text);
+            }
+            catch (Exception ex)
+            {
+                ConsoleWriteLine(ex.ToString());
+                SetStop(true);
+            }
 
             Task.Run(() =>
             {
@@ -260,8 +288,8 @@ namespace COVID
                 var turningPointSeries = chart.Series.Add("Turning point");
                 turningPointSeries.Legend = legend.Name;
                 turningPointSeries.ChartType = SeriesChartType.Point;
-                turningPointSeries.Color = Color.Green;
-                turningPointSeries.BorderWidth = 7;
+                turningPointSeries.Color = Color.DarkGreen;
+                turningPointSeries.BorderWidth = 9;
                 var point = turningPointSeries.Points[turningPointSeries.Points.AddXY(turningPoint, modelData[turningPoint])];
                 point.Label = point.AxisLabel = startDate.AddDays(turningPoint).ToShortDateString();
             }
@@ -270,8 +298,8 @@ namespace COVID
                 var orderDaySeries = chart.Series.Add("'Stay home' order date");
                 orderDaySeries.Legend = legend.Name;
                 orderDaySeries.ChartType = SeriesChartType.Point;
-                orderDaySeries.Color = Color.DarkCyan;
-                orderDaySeries.BorderWidth = 7;
+                orderDaySeries.Color = Color.Black;
+                orderDaySeries.BorderWidth = 9;
                 var iOrderDay = (int)Math.Round(orderDay);
                 var point = orderDaySeries.Points[orderDaySeries.Points.AddXY(iOrderDay, modelData[iOrderDay])];
                 point.Label = point.AxisLabel = startDate.AddDays(iOrderDay).ToShortDateString();
@@ -284,13 +312,24 @@ namespace COVID
             if (bestModel != null)
             {
                 bestError = CalculateError(bestModel, timePoints, results, actualData, valuesCache);
-                ConsoleWriteLine($"Error: {bestError}, {bestModel}");
+                ConsoleWriteLine(DateTime.Now.ToShortDateString());
+                ConsoleWriteLine($"Error: {bestError}");
+                ConsoleWriteLine(bestModel.ToString("\r\n"));
+                ConsoleWriteLine();
             }
 
             while (!stop)
             {
                 var c1 = cRange.GetRandom(rnd);
                 var c2 = cRange.GetRandom(c1, rnd);
+
+                var p1 = pRange.GetRandom(rnd);
+                var p2 = p1;
+                if (!sameP)
+                {
+                    p2 = pRange.GetRandom(rnd);
+                }
+
                 var model = new Model(
                     f0Range.GetRandom(rnd),
                     rRange.GetRandom(rnd),
@@ -298,8 +337,8 @@ namespace COVID
                     orderDayRange.GetRandom(rnd),
                     c1,
                     c2,
-                    pRange.GetRandom(rnd),
-                    pRange.GetRandom(rnd));
+                    p1,
+                    p2);
 
                 var error = CalculateError(model, timePoints, results, actualData, valuesCache);
                 if (bestModel == null || bestError > error)
@@ -358,23 +397,26 @@ namespace COVID
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2 + dC2, model.P1, model.P2);
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2 - dC2, model.P1, model.P2);
 
-            var dP1 = pRange.Diff / factor;
-            yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 + dP1, model.P2);
-            yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 - dP1, model.P2);
+            if (sameP)
+            {
+                var dP = pRange.Diff / factor;
+                yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 + dP, model.P2 + dP);
+                yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 - dP, model.P2 - dP);
+            }
+            else
+            {
+                var dP1 = pRange.Diff / factor;
+                yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 + dP1, model.P2);
+                yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 - dP1, model.P2);
 
-            var dP2 = pRange.Diff / factor;
-            yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2 + dP2);
-            yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2 - dP2);
+                var dP2 = pRange.Diff / factor;
+                yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2 + dP2);
+                yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2 - dP2);
+            }
         }
 
         private double CalculateError(Model model, double[] timePoints, double[] results, double[] actualData, List<double> valuesCache)
         {
-            // Last days are underreported.
-            var skip = 2;
-
-            // Average over windowSize days.
-            var windowSize = 3;
-
             model.Calculate(timePoints, results, valuesCache);
             double error = 0;
             for (int i = actualData.Length - 1 - skip; i >= windowSize; i--)
@@ -387,9 +429,14 @@ namespace COVID
 
         private void stopButton_Click(object sender, EventArgs e)
         {
-            stop = true;
-            startButton.Enabled = true;
-            stopButton.Enabled = false;
+            SetStop(true);
+        }
+
+        private void SetStop(bool stop)
+        {
+            this.stop = stop;
+            startButton.Enabled = this.stop;
+            stopButton.Enabled = !this.stop;
         }
     }
 }

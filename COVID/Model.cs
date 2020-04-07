@@ -16,8 +16,7 @@ namespace COVID
             this.C1 = c1;
             this.C2 = c2;
             this.P1 = p1;
-            //this.P2 = p2;
-            this.P2 = p1;
+            this.P2 = p2;
         }
 
         // Initial value
