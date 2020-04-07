@@ -31,6 +31,11 @@ namespace COVID
             return Min + rnd.NextDouble() * Diff;
         }
 
+        public double GetRandom(double max, Random rnd)
+        {
+            return Min + rnd.NextDouble() * (max - Min);
+        }
+
         public void ToView(TextBox minTextBox, TextBox maxTextBox, TextBox stepTextBox)
         {
             minTextBox.Text = Min.ToString();
