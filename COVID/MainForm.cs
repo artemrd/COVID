@@ -62,30 +62,33 @@ namespace COVID
             var orderDate = DateTime.Parse("03/23/2020");
             var orderDay = (orderDate - startDate).TotalDays;
 
-            f0Range = new ParameterRange(0.05, 0.2, 0.01);
-            rRange = new ParameterRange(15, 30, 1);
-            orderDayRange = new ParameterRange(orderDay, orderDay + 10, 1);
-            cRange = new ParameterRange(1E-6, 2E-5, 1E-6);
-            pRange = new ParameterRange(10000, 30000, 2000);
+            f0Range = new ParameterRange(0.05, 0.2);
+            rRange = new ParameterRange(15, 30);
+            orderDayRange = new ParameterRange(orderDay, orderDay + 10);
+            cRange = new ParameterRange(1E-6, 2E-5);
+            pRange = new ParameterRange(10000, 30000);
 
-            f0Range.ToView(f0MinTextBox, f0MaxTextBox, f0StepTextBox);
-            rRange.ToView(rMinTextBox, rMaxTextBox, rStepTextBox);
-            orderDayRange.ToView(oMinTextBox, oMaxTextBox, oStepTextBox);
-            cRange.ToView(cMinTextBox, cMaxTextBox, cStepTextBox);
-            pRange.ToView(pMinTextBox, pMaxTextBox, pStepTextBox);
+            f0Range.ToView(f0MinTextBox, f0MaxTextBox);
+            rRange.ToView(rMinTextBox, rMaxTextBox);
+            orderDayRange.ToView(oMinTextBox, oMaxTextBox);
+            cRange.ToView(cMinTextBox, cMaxTextBox);
+            pRange.ToView(pMinTextBox, pMaxTextBox);
+
+            stopButton.Enabled = false;
         }
 
-        private void calculateButton_Click(object sender, EventArgs e)
+        private void startButton_Click(object sender, EventArgs e)
         {
             stop = false;
-            calculateButton.Enabled = false;
+            startButton.Enabled = false;
+            stopButton.Enabled = true;
             consoleTextBox.Clear();
 
-            f0Range = new ParameterRange(f0MinTextBox, f0MaxTextBox, f0StepTextBox);
-            rRange = new ParameterRange(rMinTextBox, rMaxTextBox, rStepTextBox);
-            orderDayRange = new ParameterRange(oMinTextBox, oMaxTextBox, oStepTextBox);
-            cRange = new ParameterRange(cMinTextBox, cMaxTextBox, cStepTextBox);
-            pRange = new ParameterRange(pMinTextBox, pMaxTextBox, pStepTextBox);
+            f0Range = new ParameterRange(f0MinTextBox, f0MaxTextBox);
+            rRange = new ParameterRange(rMinTextBox, rMaxTextBox);
+            orderDayRange = new ParameterRange(oMinTextBox, oMaxTextBox);
+            cRange = new ParameterRange(cMinTextBox, cMaxTextBox);
+            pRange = new ParameterRange(pMinTextBox, pMaxTextBox);
 
             Task.Run(() =>
             {
@@ -212,20 +215,6 @@ namespace COVID
             }
 
             {
-                var modelSeries = chart.Series.Add("Model");
-                modelSeries.Legend = legend.Name;
-                modelSeries.ChartType = SeriesChartType.Line;
-                modelSeries.Color = Color.DarkBlue;
-                modelSeries.BorderWidth = 3;
-                for (int i = 0; i < modelData.Length; i++)
-                {
-                    var point = modelSeries.Points[modelSeries.Points.AddXY(i, modelData[i])];
-                    point.AxisLabel = startDate.AddDays(i).ToShortDateString();
-                    point.ToolTip = Math.Round(modelData[i]).ToString();
-                }
-            }
-
-            {
                 var actualDailySeries = chart.Series.Add("Actual daily");
                 actualDailySeries.Legend = legend.Name;
                 actualDailySeries.Color = Color.PaleVioletRed;
@@ -236,6 +225,20 @@ namespace COVID
                     var point = actualDailySeries.Points[actualDailySeries.Points.AddXY(i, value)];
                     point.AxisLabel = startDate.AddDays(i).ToShortDateString();
                     point.ToolTip = Math.Round(value).ToString();
+                }
+            }
+
+            {
+                var modelSeries = chart.Series.Add("Model");
+                modelSeries.Legend = legend.Name;
+                modelSeries.ChartType = SeriesChartType.Line;
+                modelSeries.Color = Color.DarkBlue;
+                modelSeries.BorderWidth = 3;
+                for (int i = 0; i < modelData.Length; i++)
+                {
+                    var point = modelSeries.Points[modelSeries.Points.AddXY(i, modelData[i])];
+                    point.AxisLabel = startDate.AddDays(i).ToShortDateString();
+                    point.ToolTip = Math.Round(modelData[i]).ToString();
                 }
             }
 
@@ -385,7 +388,8 @@ namespace COVID
         private void stopButton_Click(object sender, EventArgs e)
         {
             stop = true;
-            calculateButton.Enabled = true;
+            startButton.Enabled = true;
+            stopButton.Enabled = false;
         }
     }
 }

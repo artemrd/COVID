@@ -28,10 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.calculateButton = new System.Windows.Forms.Button();
+            this.startButton = new System.Windows.Forms.Button();
             this.consoleTextBox = new System.Windows.Forms.TextBox();
             this.stopButton = new System.Windows.Forms.Button();
             this.f0Label = new System.Windows.Forms.Label();
@@ -41,17 +40,12 @@
             this.pLabel = new System.Windows.Forms.Label();
             this.f0MinTextBox = new System.Windows.Forms.TextBox();
             this.f0MaxTextBox = new System.Windows.Forms.TextBox();
-            this.f0StepTextBox = new System.Windows.Forms.TextBox();
-            this.rStepTextBox = new System.Windows.Forms.TextBox();
             this.rMaxTextBox = new System.Windows.Forms.TextBox();
             this.rMinTextBox = new System.Windows.Forms.TextBox();
-            this.oStepTextBox = new System.Windows.Forms.TextBox();
             this.oMaxTextBox = new System.Windows.Forms.TextBox();
             this.oMinTextBox = new System.Windows.Forms.TextBox();
-            this.cStepTextBox = new System.Windows.Forms.TextBox();
             this.cMaxTextBox = new System.Windows.Forms.TextBox();
             this.cMinTextBox = new System.Windows.Forms.TextBox();
-            this.pStepTextBox = new System.Windows.Forms.TextBox();
             this.pMaxTextBox = new System.Windows.Forms.TextBox();
             this.pMinTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.chart)).BeginInit();
@@ -61,39 +55,37 @@
             // 
             this.chart.BorderlineColor = System.Drawing.Color.Gray;
             this.chart.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea1.Name = "ChartArea1";
-            this.chart.ChartAreas.Add(chartArea1);
-            legend1.Name = "Legend1";
-            this.chart.Legends.Add(legend1);
+            chartArea2.Name = "ChartArea1";
+            this.chart.ChartAreas.Add(chartArea2);
             this.chart.Location = new System.Drawing.Point(12, 12);
             this.chart.Name = "chart";
-            this.chart.Size = new System.Drawing.Size(1623, 674);
+            this.chart.Size = new System.Drawing.Size(1724, 682);
             this.chart.TabIndex = 0;
             this.chart.Text = "Chart";
             // 
-            // calculateButton
+            // startButton
             // 
-            this.calculateButton.Location = new System.Drawing.Point(1450, 1284);
-            this.calculateButton.Name = "calculateButton";
-            this.calculateButton.Size = new System.Drawing.Size(104, 36);
-            this.calculateButton.TabIndex = 1;
-            this.calculateButton.Text = "Calculate";
-            this.calculateButton.UseVisualStyleBackColor = true;
-            this.calculateButton.Click += new System.EventHandler(this.calculateButton_Click);
+            this.startButton.Location = new System.Drawing.Point(1946, 209);
+            this.startButton.Name = "startButton";
+            this.startButton.Size = new System.Drawing.Size(75, 36);
+            this.startButton.TabIndex = 1;
+            this.startButton.Text = "Start";
+            this.startButton.UseVisualStyleBackColor = true;
+            this.startButton.Click += new System.EventHandler(this.startButton_Click);
             // 
             // consoleTextBox
             // 
-            this.consoleTextBox.Location = new System.Drawing.Point(12, 692);
+            this.consoleTextBox.Location = new System.Drawing.Point(12, 700);
             this.consoleTextBox.Multiline = true;
             this.consoleTextBox.Name = "consoleTextBox";
             this.consoleTextBox.ReadOnly = true;
             this.consoleTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.consoleTextBox.Size = new System.Drawing.Size(1623, 586);
+            this.consoleTextBox.Size = new System.Drawing.Size(1724, 586);
             this.consoleTextBox.TabIndex = 2;
             // 
             // stopButton
             // 
-            this.stopButton.Location = new System.Drawing.Point(1560, 1284);
+            this.stopButton.Location = new System.Drawing.Point(1946, 251);
             this.stopButton.Name = "stopButton";
             this.stopButton.Size = new System.Drawing.Size(75, 36);
             this.stopButton.TabIndex = 3;
@@ -104,7 +96,7 @@
             // f0Label
             // 
             this.f0Label.AutoSize = true;
-            this.f0Label.Location = new System.Drawing.Point(1674, 15);
+            this.f0Label.Location = new System.Drawing.Point(1780, 15);
             this.f0Label.Name = "f0Label";
             this.f0Label.Size = new System.Drawing.Size(28, 20);
             this.f0Label.TabIndex = 4;
@@ -113,7 +105,7 @@
             // rLabel
             // 
             this.rLabel.AutoSize = true;
-            this.rLabel.Location = new System.Drawing.Point(1681, 48);
+            this.rLabel.Location = new System.Drawing.Point(1788, 47);
             this.rLabel.Name = "rLabel";
             this.rLabel.Size = new System.Drawing.Size(21, 20);
             this.rLabel.TabIndex = 5;
@@ -122,7 +114,7 @@
             // oLabel
             // 
             this.oLabel.AutoSize = true;
-            this.oLabel.Location = new System.Drawing.Point(1681, 80);
+            this.oLabel.Location = new System.Drawing.Point(1788, 79);
             this.oLabel.Name = "oLabel";
             this.oLabel.Size = new System.Drawing.Size(21, 20);
             this.oLabel.TabIndex = 6;
@@ -131,7 +123,7 @@
             // cLabel
             // 
             this.cLabel.AutoSize = true;
-            this.cLabel.Location = new System.Drawing.Point(1681, 112);
+            this.cLabel.Location = new System.Drawing.Point(1788, 111);
             this.cLabel.Name = "cLabel";
             this.cLabel.Size = new System.Drawing.Size(20, 20);
             this.cLabel.TabIndex = 7;
@@ -140,7 +132,7 @@
             // pLabel
             // 
             this.pLabel.AutoSize = true;
-            this.pLabel.Location = new System.Drawing.Point(1683, 144);
+            this.pLabel.Location = new System.Drawing.Point(1789, 143);
             this.pLabel.Name = "pLabel";
             this.pLabel.Size = new System.Drawing.Size(19, 20);
             this.pLabel.TabIndex = 8;
@@ -148,105 +140,70 @@
             // 
             // f0MinTextBox
             // 
-            this.f0MinTextBox.Location = new System.Drawing.Point(1708, 13);
+            this.f0MinTextBox.Location = new System.Drawing.Point(1815, 12);
             this.f0MinTextBox.Name = "f0MinTextBox";
             this.f0MinTextBox.Size = new System.Drawing.Size(100, 26);
             this.f0MinTextBox.TabIndex = 9;
             // 
             // f0MaxTextBox
             // 
-            this.f0MaxTextBox.Location = new System.Drawing.Point(1814, 13);
+            this.f0MaxTextBox.Location = new System.Drawing.Point(1921, 12);
             this.f0MaxTextBox.Name = "f0MaxTextBox";
             this.f0MaxTextBox.Size = new System.Drawing.Size(100, 26);
             this.f0MaxTextBox.TabIndex = 10;
             // 
-            // f0StepTextBox
-            // 
-            this.f0StepTextBox.Location = new System.Drawing.Point(1920, 13);
-            this.f0StepTextBox.Name = "f0StepTextBox";
-            this.f0StepTextBox.Size = new System.Drawing.Size(100, 26);
-            this.f0StepTextBox.TabIndex = 11;
-            // 
-            // rStepTextBox
-            // 
-            this.rStepTextBox.Location = new System.Drawing.Point(1920, 45);
-            this.rStepTextBox.Name = "rStepTextBox";
-            this.rStepTextBox.Size = new System.Drawing.Size(100, 26);
-            this.rStepTextBox.TabIndex = 14;
-            // 
             // rMaxTextBox
             // 
-            this.rMaxTextBox.Location = new System.Drawing.Point(1814, 45);
+            this.rMaxTextBox.Location = new System.Drawing.Point(1921, 44);
             this.rMaxTextBox.Name = "rMaxTextBox";
             this.rMaxTextBox.Size = new System.Drawing.Size(100, 26);
             this.rMaxTextBox.TabIndex = 13;
             // 
             // rMinTextBox
             // 
-            this.rMinTextBox.Location = new System.Drawing.Point(1708, 45);
+            this.rMinTextBox.Location = new System.Drawing.Point(1815, 44);
             this.rMinTextBox.Name = "rMinTextBox";
             this.rMinTextBox.Size = new System.Drawing.Size(100, 26);
             this.rMinTextBox.TabIndex = 12;
             // 
-            // oStepTextBox
-            // 
-            this.oStepTextBox.Location = new System.Drawing.Point(1920, 77);
-            this.oStepTextBox.Name = "oStepTextBox";
-            this.oStepTextBox.Size = new System.Drawing.Size(100, 26);
-            this.oStepTextBox.TabIndex = 17;
-            // 
             // oMaxTextBox
             // 
-            this.oMaxTextBox.Location = new System.Drawing.Point(1814, 77);
+            this.oMaxTextBox.Location = new System.Drawing.Point(1921, 76);
             this.oMaxTextBox.Name = "oMaxTextBox";
             this.oMaxTextBox.Size = new System.Drawing.Size(100, 26);
             this.oMaxTextBox.TabIndex = 16;
             // 
             // oMinTextBox
             // 
-            this.oMinTextBox.Location = new System.Drawing.Point(1708, 77);
+            this.oMinTextBox.Location = new System.Drawing.Point(1815, 76);
             this.oMinTextBox.Name = "oMinTextBox";
             this.oMinTextBox.Size = new System.Drawing.Size(100, 26);
             this.oMinTextBox.TabIndex = 15;
             // 
-            // cStepTextBox
-            // 
-            this.cStepTextBox.Location = new System.Drawing.Point(1920, 109);
-            this.cStepTextBox.Name = "cStepTextBox";
-            this.cStepTextBox.Size = new System.Drawing.Size(100, 26);
-            this.cStepTextBox.TabIndex = 20;
-            // 
             // cMaxTextBox
             // 
-            this.cMaxTextBox.Location = new System.Drawing.Point(1814, 109);
+            this.cMaxTextBox.Location = new System.Drawing.Point(1921, 108);
             this.cMaxTextBox.Name = "cMaxTextBox";
             this.cMaxTextBox.Size = new System.Drawing.Size(100, 26);
             this.cMaxTextBox.TabIndex = 19;
             // 
             // cMinTextBox
             // 
-            this.cMinTextBox.Location = new System.Drawing.Point(1708, 109);
+            this.cMinTextBox.Location = new System.Drawing.Point(1815, 108);
             this.cMinTextBox.Name = "cMinTextBox";
             this.cMinTextBox.Size = new System.Drawing.Size(100, 26);
             this.cMinTextBox.TabIndex = 18;
             // 
-            // pStepTextBox
-            // 
-            this.pStepTextBox.Location = new System.Drawing.Point(1920, 141);
-            this.pStepTextBox.Name = "pStepTextBox";
-            this.pStepTextBox.Size = new System.Drawing.Size(100, 26);
-            this.pStepTextBox.TabIndex = 23;
-            // 
             // pMaxTextBox
             // 
-            this.pMaxTextBox.Location = new System.Drawing.Point(1814, 141);
+            this.pMaxTextBox.Location = new System.Drawing.Point(1921, 140);
             this.pMaxTextBox.Name = "pMaxTextBox";
             this.pMaxTextBox.Size = new System.Drawing.Size(100, 26);
             this.pMaxTextBox.TabIndex = 22;
             // 
             // pMinTextBox
             // 
-            this.pMinTextBox.Location = new System.Drawing.Point(1708, 141);
+            this.pMinTextBox.Location = new System.Drawing.Point(1815, 140);
             this.pMinTextBox.Name = "pMinTextBox";
             this.pMinTextBox.Size = new System.Drawing.Size(100, 26);
             this.pMinTextBox.TabIndex = 21;
@@ -255,20 +212,15 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(2033, 1332);
-            this.Controls.Add(this.pStepTextBox);
+            this.ClientSize = new System.Drawing.Size(2033, 1298);
             this.Controls.Add(this.pMaxTextBox);
             this.Controls.Add(this.pMinTextBox);
-            this.Controls.Add(this.cStepTextBox);
             this.Controls.Add(this.cMaxTextBox);
             this.Controls.Add(this.cMinTextBox);
-            this.Controls.Add(this.oStepTextBox);
             this.Controls.Add(this.oMaxTextBox);
             this.Controls.Add(this.oMinTextBox);
-            this.Controls.Add(this.rStepTextBox);
             this.Controls.Add(this.rMaxTextBox);
             this.Controls.Add(this.rMinTextBox);
-            this.Controls.Add(this.f0StepTextBox);
             this.Controls.Add(this.f0MaxTextBox);
             this.Controls.Add(this.f0MinTextBox);
             this.Controls.Add(this.pLabel);
@@ -278,7 +230,7 @@
             this.Controls.Add(this.f0Label);
             this.Controls.Add(this.stopButton);
             this.Controls.Add(this.consoleTextBox);
-            this.Controls.Add(this.calculateButton);
+            this.Controls.Add(this.startButton);
             this.Controls.Add(this.chart);
             this.Name = "MainForm";
             this.Text = "COVID";
@@ -292,7 +244,7 @@
         #endregion
 
         private System.Windows.Forms.DataVisualization.Charting.Chart chart;
-        private System.Windows.Forms.Button calculateButton;
+        private System.Windows.Forms.Button startButton;
         private System.Windows.Forms.TextBox consoleTextBox;
         private System.Windows.Forms.Button stopButton;
         private System.Windows.Forms.Label f0Label;
@@ -302,17 +254,12 @@
         private System.Windows.Forms.Label pLabel;
         private System.Windows.Forms.TextBox f0MinTextBox;
         private System.Windows.Forms.TextBox f0MaxTextBox;
-        private System.Windows.Forms.TextBox f0StepTextBox;
-        private System.Windows.Forms.TextBox rStepTextBox;
         private System.Windows.Forms.TextBox rMaxTextBox;
         private System.Windows.Forms.TextBox rMinTextBox;
-        private System.Windows.Forms.TextBox oStepTextBox;
         private System.Windows.Forms.TextBox oMaxTextBox;
         private System.Windows.Forms.TextBox oMinTextBox;
-        private System.Windows.Forms.TextBox cStepTextBox;
         private System.Windows.Forms.TextBox cMaxTextBox;
         private System.Windows.Forms.TextBox cMinTextBox;
-        private System.Windows.Forms.TextBox pStepTextBox;
         private System.Windows.Forms.TextBox pMaxTextBox;
         private System.Windows.Forms.TextBox pMinTextBox;
     }

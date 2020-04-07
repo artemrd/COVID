@@ -16,8 +16,8 @@ namespace COVID
             this.C1 = c1;
             this.C2 = c2;
             this.P1 = p1;
-            this.P2 = p2;
-            //this.P2 = p1;
+            //this.P2 = p2;
+            this.P2 = p1;
         }
 
         // Initial value
@@ -93,7 +93,16 @@ namespace COVID
 
         public string ToString(string separator)
         {
-            return $"F0: {F0}{separator}R: {R}{separator}OrderDate: {this.StartDate.AddDays(Math.Round(OrderDay)).ToShortDateString()} ({OrderDay}){separator}C1: {C1}{separator}C2: {C2}{separator}P1: {P1}{separator}P2: {P2}{separator}R * C1 * P1: {R * C1 * P1}{separator}R * C2 * P2: {R * C2 * P2}";
+            return $"F0: {F0}{separator}" +
+                $"R: {R}{separator}" +
+                $"OrderDate: {this.StartDate.AddDays(Math.Round(OrderDay)).ToShortDateString()} ({OrderDay}){separator}" +
+                $"C1: {C1}{separator}" +
+                $"C2: {C2}{separator}" +
+                $"P1: {P1}{separator}" +
+                $"P2: {P2}{separator}" +
+                $"R * C1 * P1: {R * C1 * P1}{separator}" +
+                $"R * C2 * P2: {R * C2 * P2}{separator}" +
+                $"1 - C2 / C1: {1.0 - C2 / C1}";
         }
     }
 }
