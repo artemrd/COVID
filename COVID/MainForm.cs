@@ -206,9 +206,27 @@ namespace COVID
         private void PopulateChart(double[] actualData, double[] modelData, DateTime startDate, int turningPoint, double orderDay)
         {
             chart.Series.Clear();
+            chart.Legends.Clear();
+
+            var legend = chart.Legends.Add("Legend");
+            legend.Docking = Docking.Bottom;
+            legend.LegendStyle = LegendStyle.Row;
+
+            {
+                var modelDailySeries = chart.Series.Add("Model daily");
+                modelDailySeries.Legend = legend.Name;
+                modelDailySeries.Color = Color.LightBlue;
+                modelDailySeries.YAxisType = AxisType.Secondary;
+                for (int i = 1; i < modelData.Length; i++)
+                {
+                    var point = modelDailySeries.Points[modelDailySeries.Points.AddXY(i, modelData[i] - modelData[i - 1])];
+                    point.AxisLabel = startDate.AddDays(i).ToShortDateString();
+                }
+            }
 
             {
                 var modelSeries = chart.Series.Add("Model");
+                modelSeries.Legend = legend.Name;
                 modelSeries.ChartType = SeriesChartType.Line;
                 modelSeries.Color = Color.DarkBlue;
                 modelSeries.BorderWidth = 3;
@@ -220,7 +238,20 @@ namespace COVID
             }
 
             {
+                var actualDailySeries = chart.Series.Add("Actual daily");
+                actualDailySeries.Legend = legend.Name;
+                actualDailySeries.Color = Color.PaleVioletRed;
+                actualDailySeries.YAxisType = AxisType.Secondary;
+                for (int i = 1; i < actualData.Length; i++)
+                {
+                    var point = actualDailySeries.Points[actualDailySeries.Points.AddXY(i, actualData[i] - actualData[i - 1])];
+                    point.AxisLabel = startDate.AddDays(i).ToShortDateString();
+                }
+            }
+
+            {
                 var actualSeries = chart.Series.Add("Actual");
+                actualSeries.Legend = legend.Name;
                 actualSeries.ChartType = SeriesChartType.Line;
                 actualSeries.Color = Color.Red;
                 actualSeries.BorderWidth = 3;
@@ -233,6 +264,7 @@ namespace COVID
 
             {
                 var turningPointSeries = chart.Series.Add("Turning point");
+                turningPointSeries.Legend = legend.Name;
                 turningPointSeries.ChartType = SeriesChartType.Point;
                 turningPointSeries.Color = Color.Green;
                 turningPointSeries.BorderWidth = 7;
@@ -241,7 +273,8 @@ namespace COVID
             }
 
             {
-                var orderDaySeries = chart.Series.Add("Order");
+                var orderDaySeries = chart.Series.Add("'Stay home' order date");
+                orderDaySeries.Legend = legend.Name;
                 orderDaySeries.ChartType = SeriesChartType.Point;
                 orderDaySeries.Color = Color.DarkCyan;
                 orderDaySeries.BorderWidth = 7;
@@ -401,11 +434,16 @@ namespace COVID
         {
             model.Calculate(timePoints, results, valuesCache);
             double error = 0;
-            for (int i = 1; i < actualData.Length; i++)
+            for (int i = 0; i < actualData.Length; i++)
             {
-                var diff = (results[i] - results[i - 1]) - (actualData[i] - actualData[i - 1]);
+                var diff = results[i] - actualData[i];
                 error += diff * diff;
             }
+            //for (int i = 1; i < actualData.Length; i++)
+            //{
+            //    var diff = (results[i] - results[i - 1]) - (actualData[i] - actualData[i - 1]);
+            //    error += diff * diff;
+            //}
             return error;
         }
 
