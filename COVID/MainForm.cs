@@ -27,6 +27,8 @@ namespace COVID
         int skip;
         // Average over windowSize days.
         int windowSize;
+        // Use weighted errors.
+        bool isWeighted;
 
         public MainForm()
         {
@@ -76,8 +78,9 @@ namespace COVID
             cRange = new ParameterRange(1E-6, 2E-5);
             pRange = new ParameterRange(10000, 40000);
             
-            skip = 2;
+            skip = 1;
             windowSize = 3;
+            isWeighted = false;
 
             f0Range.ToView(f0MinTextBox, f0MaxTextBox);
             rRange.ToView(rMinTextBox, rMaxTextBox);
@@ -87,6 +90,7 @@ namespace COVID
             
             skipTextBox.Text = skip.ToString();
             windowTextBox.Text = windowSize.ToString();
+            isWeightedCheckBox.Checked = isWeighted;
 
             SetStop(true);
         }
@@ -106,6 +110,7 @@ namespace COVID
                 
                 skip = Convert.ToInt32(skipTextBox.Text);
                 windowSize = Convert.ToInt32(windowTextBox.Text);
+                isWeighted = isWeightedCheckBox.Checked;
             }
             catch (Exception ex)
             {
@@ -440,7 +445,10 @@ namespace COVID
                 {
                     var diff = value1 - value2;
 
-                    // diff /= avgValue;
+                    if (isWeighted)
+                    {
+                        diff /= avgValue;
+                    }
 
                     error += diff * diff;
                 }

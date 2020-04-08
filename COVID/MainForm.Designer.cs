@@ -52,6 +52,7 @@
             this.skipTextBox = new System.Windows.Forms.TextBox();
             this.windowTextBox = new System.Windows.Forms.TextBox();
             this.windowLabel = new System.Windows.Forms.Label();
+            this.isWeightedCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.chart)).BeginInit();
             this.SuspendLayout();
             // 
@@ -244,11 +245,22 @@
             this.windowLabel.TabIndex = 27;
             this.windowLabel.Text = "Window";
             // 
+            // isWeightedCheckBox
+            // 
+            this.isWeightedCheckBox.AutoSize = true;
+            this.isWeightedCheckBox.Location = new System.Drawing.Point(1815, 296);
+            this.isWeightedCheckBox.Name = "isWeightedCheckBox";
+            this.isWeightedCheckBox.Size = new System.Drawing.Size(103, 24);
+            this.isWeightedCheckBox.TabIndex = 28;
+            this.isWeightedCheckBox.Text = "Weighted";
+            this.isWeightedCheckBox.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2033, 1298);
+            this.Controls.Add(this.isWeightedCheckBox);
             this.Controls.Add(this.windowLabel);
             this.Controls.Add(this.windowTextBox);
             this.Controls.Add(this.skipTextBox);
@@ -306,6 +318,7 @@
         private System.Windows.Forms.TextBox skipTextBox;
         private System.Windows.Forms.TextBox windowTextBox;
         private System.Windows.Forms.Label windowLabel;
+        private System.Windows.Forms.CheckBox isWeightedCheckBox;
     }
 }
 
