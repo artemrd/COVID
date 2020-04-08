@@ -101,7 +101,8 @@ namespace COVID
                 $"P2: {P2}{separator}" +
                 $"R * C1 * P1: {R * C1 * P1}{separator}" +
                 $"R * C2 * P2: {R * C2 * P2}{separator}" +
-                $"1 - C2 / C1: {1.0 - C2 / C1}";
+                $"1 - C2 / C1: {1.0 - C2 / C1}{separator}" +
+                $"1 - R * C2 * P2 / R * C1 * P1: {1.0 - (R * C2 * P2) / (R * C1 * P1)}";
         }
     }
 }

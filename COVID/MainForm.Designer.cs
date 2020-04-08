@@ -48,7 +48,6 @@
             this.cMinTextBox = new System.Windows.Forms.TextBox();
             this.pMaxTextBox = new System.Windows.Forms.TextBox();
             this.pMinTextBox = new System.Windows.Forms.TextBox();
-            this.samePCheckBox = new System.Windows.Forms.CheckBox();
             this.skipLabel = new System.Windows.Forms.Label();
             this.skipTextBox = new System.Windows.Forms.TextBox();
             this.windowTextBox = new System.Windows.Forms.TextBox();
@@ -213,16 +212,6 @@
             this.pMinTextBox.Size = new System.Drawing.Size(100, 26);
             this.pMinTextBox.TabIndex = 21;
             // 
-            // samePCheckBox
-            // 
-            this.samePCheckBox.AutoSize = true;
-            this.samePCheckBox.Location = new System.Drawing.Point(1815, 201);
-            this.samePCheckBox.Name = "samePCheckBox";
-            this.samePCheckBox.Size = new System.Drawing.Size(90, 24);
-            this.samePCheckBox.TabIndex = 23;
-            this.samePCheckBox.Text = "P1 = P2";
-            this.samePCheckBox.UseVisualStyleBackColor = true;
-            // 
             // skipLabel
             // 
             this.skipLabel.AutoSize = true;
@@ -264,7 +253,6 @@
             this.Controls.Add(this.windowTextBox);
             this.Controls.Add(this.skipTextBox);
             this.Controls.Add(this.skipLabel);
-            this.Controls.Add(this.samePCheckBox);
             this.Controls.Add(this.pMaxTextBox);
             this.Controls.Add(this.pMinTextBox);
             this.Controls.Add(this.cMaxTextBox);
@@ -314,7 +302,6 @@
         private System.Windows.Forms.TextBox cMinTextBox;
         private System.Windows.Forms.TextBox pMaxTextBox;
         private System.Windows.Forms.TextBox pMinTextBox;
-        private System.Windows.Forms.CheckBox samePCheckBox;
         private System.Windows.Forms.Label skipLabel;
         private System.Windows.Forms.TextBox skipTextBox;
         private System.Windows.Forms.TextBox windowTextBox;
