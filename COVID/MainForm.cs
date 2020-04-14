@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -23,11 +24,10 @@ namespace COVID
         ParameterRange pRange;
         
         // Training parameters.
-        // Last days are underreported, skip some.
         int skip;
-        // Average over windowSize days.
         int windowSize;
-        // Use weighted errors.
+        double step;
+        double factor;
         bool isWeighted;
 
         public MainForm()
@@ -61,25 +61,19 @@ namespace COVID
             }
             actualData = actualDataList.ToArray();
 
-            //double missFactor = (6604.0 / 6585) - 1;
-            double missFactor = 0;
-            for (int i = actualData.Length - 1; i >= 0; i--)
-            {
-                actualData[i] = actualData[i] * (1 + missFactor);
-                missFactor = missFactor * missFactor;
-            }
-
             var orderDate = DateTime.Parse("03/23/2020");
             var orderDay = (orderDate - startDate).TotalDays;
 
-            f0Range = new ParameterRange(0.05, 0.2);
-            rRange = new ParameterRange(10, 30);
+            f0Range = new ParameterRange(0.01, 0.2);
+            rRange = new ParameterRange(5, 30);
             orderDayRange = new ParameterRange(orderDay, orderDay + 10);
             cRange = new ParameterRange(1E-6, 2E-5);
-            pRange = new ParameterRange(10000, 40000);
+            pRange = new ParameterRange(15000, 50000);
             
-            skip = 1;
-            windowSize = 3;
+            skip = 0;
+            windowSize = 1;
+            step = 0.01;
+            factor = 1.5;
             isWeighted = false;
 
             f0Range.ToView(f0MinTextBox, f0MaxTextBox);
@@ -90,6 +84,8 @@ namespace COVID
             
             skipTextBox.Text = skip.ToString();
             windowTextBox.Text = windowSize.ToString();
+            stepTextBox.Text = step.ToString();
+            factorTextBox.Text = factor.ToString();
             isWeightedCheckBox.Checked = isWeighted;
 
             SetStop(true);
@@ -110,6 +106,8 @@ namespace COVID
                 
                 skip = Convert.ToInt32(skipTextBox.Text);
                 windowSize = Convert.ToInt32(windowTextBox.Text);
+                step = Convert.ToDouble(stepTextBox.Text);
+                factor = Convert.ToDouble(factorTextBox.Text);
                 isWeighted = isWeightedCheckBox.Checked;
             }
             catch (Exception ex)
@@ -142,26 +140,48 @@ namespace COVID
                     timePoints[i] = i;
                 }
                 results = new double[timePoints.Length];
-
                 model.Calculate(timePoints, results, valuesCache);
+
+                var noOrderResults = new double[timePoints.Length];
+                var noOrderModel = new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C1, model.P1, model.P1);
+                noOrderModel.Calculate(timePoints, noOrderResults, valuesCache);
+
                 int turningPoint = -1;
+                int noOrderTurningPoint = -1;
                 for (int i = 0; i < timePoints.Length; i++)
                 {
                     string d2FLabel = string.Empty;
                     if (i > 0 && i < results.Length - 1)
                     {
-                        double d2F = results[i - 1] + results[i + 1] - 2 * results[i];
-                        if (d2F > 0)
                         {
-                            d2FLabel = "+";
-                            turningPoint = -1;
-                        }
-                        else if (d2F < 0)
-                        {
-                            d2FLabel = "-";
-                            if (turningPoint < 0)
+                            double d2F = results[i - 1] + results[i + 1] - 2 * results[i];
+                            if (d2F > 0)
                             {
-                                turningPoint = i;
+                                d2FLabel = "+";
+                                turningPoint = -1;
+                            }
+                            else if (d2F < 0)
+                            {
+                                d2FLabel = "-";
+                                if (turningPoint < 0)
+                                {
+                                    turningPoint = i;
+                                }
+                            }
+                        }
+
+                        {
+                            double noOrderD2F = noOrderResults[i - 1] + noOrderResults[i + 1] - 2 * noOrderResults[i];
+                            if (noOrderD2F > 0)
+                            {
+                                noOrderTurningPoint = -1;
+                            }
+                            else if (noOrderD2F < 0)
+                            {
+                                if (noOrderTurningPoint < 0)
+                                {
+                                    noOrderTurningPoint = i;
+                                }
                             }
                         }
                     }
@@ -190,23 +210,28 @@ namespace COVID
                 ConsoleWriteLine();
                 ConsoleWriteLine(DateTime.Now.ToShortDateString());
                 ConsoleWriteLine($"Error: {error}");
-                ConsoleWriteLine(model.ToString("\r\n"));
+                ConsoleWriteLine(model.ToString(Environment.NewLine));
 
-                chart.Invoke(new Action<double[], double[], DateTime, int, double>(PopulateChart), new object[] { actualData, results, startDate, turningPoint, model.OrderDay });
+                chart.Invoke(new Action<double[], double[], DateTime, int, double, double[], int>(PopulateChart), new object[] { actualData, results, startDate, turningPoint, model.OrderDay, noOrderResults, noOrderTurningPoint });
             });
         }
 
         private void ConsoleWriteLine()
         {
-            ConsoleWriteLine(string.Empty);
+            ConsoleWrite(Environment.NewLine);
         }
 
         private void ConsoleWriteLine(string text)
         {
+            ConsoleWrite(text);
+            ConsoleWrite(Environment.NewLine);
+        }
+
+        private void ConsoleWrite(string text)
+        {
             var writeDelegate = new Action(() =>
             {
                 consoleTextBox.AppendText(text);
-                consoleTextBox.AppendText("\r\n");
             });
 
             if (consoleTextBox.InvokeRequired)
@@ -219,7 +244,7 @@ namespace COVID
             }
         }
 
-        private void PopulateChart(double[] actualData, double[] modelData, DateTime startDate, int turningPoint, double orderDay)
+        private void PopulateChart(double[] actualData, double[] modelData, DateTime startDate, int turningPoint, double orderDay, double[] noOrderModelData, int noOrderTurningPoint)
         {
             chart.Series.Clear();
             chart.Legends.Clear();
@@ -233,9 +258,9 @@ namespace COVID
                 modelDailySeries.Legend = legend.Name;
                 modelDailySeries.Color = Color.LightBlue;
                 modelDailySeries.YAxisType = AxisType.Secondary;
-                for (int i = 1; i < modelData.Length; i++)
+                for (int i = windowSize; i < modelData.Length; i++)
                 {
-                    var value = modelData[i] - modelData[i - 1];
+                    var value = modelData[i] - modelData[i - windowSize];
                     var point = modelDailySeries.Points[modelDailySeries.Points.AddXY(i, value)];
                     point.AxisLabel = startDate.AddDays(i).ToShortDateString();
                     point.ToolTip = Math.Round(value).ToString();
@@ -247,9 +272,9 @@ namespace COVID
                 actualDailySeries.Legend = legend.Name;
                 actualDailySeries.Color = Color.PaleVioletRed;
                 actualDailySeries.YAxisType = AxisType.Secondary;
-                for (int i = 1; i < actualData.Length; i++)
+                for (int i = windowSize; i < actualData.Length; i++)
                 {
-                    var value = actualData[i] - actualData[i - 1];
+                    var value = actualData[i] - actualData[i - windowSize];
                     var point = actualDailySeries.Points[actualDailySeries.Points.AddXY(i, value)];
                     point.AxisLabel = startDate.AddDays(i).ToShortDateString();
                     point.ToolTip = Math.Round(value).ToString();
@@ -267,6 +292,21 @@ namespace COVID
                     var point = modelSeries.Points[modelSeries.Points.AddXY(i, modelData[i])];
                     point.AxisLabel = startDate.AddDays(i).ToShortDateString();
                     point.ToolTip = Math.Round(modelData[i]).ToString();
+                }
+            }
+
+            {
+                var noOrderModelSeries = chart.Series.Add("Model no order");
+                noOrderModelSeries.Legend = legend.Name;
+                noOrderModelSeries.ChartType = SeriesChartType.Line;
+                noOrderModelSeries.Color = Color.DarkBlue;
+                noOrderModelSeries.BorderWidth = 1;
+                noOrderModelSeries.BorderDashStyle = ChartDashStyle.Dash;
+                for (int i = 0; i < noOrderModelData.Length; i++)
+                {
+                    var point = noOrderModelSeries.Points[noOrderModelSeries.Points.AddXY(i, noOrderModelData[i])];
+                    point.AxisLabel = startDate.AddDays(i).ToShortDateString();
+                    point.ToolTip = Math.Round(noOrderModelData[i]).ToString();
                 }
             }
 
@@ -295,6 +335,16 @@ namespace COVID
             }
 
             {
+                var noOrderTurningPointSeries = chart.Series.Add("No order turning point");
+                noOrderTurningPointSeries.Legend = legend.Name;
+                noOrderTurningPointSeries.ChartType = SeriesChartType.Point;
+                noOrderTurningPointSeries.Color = Color.DarkBlue;
+                noOrderTurningPointSeries.BorderWidth = 5;
+                var point = noOrderTurningPointSeries.Points[noOrderTurningPointSeries.Points.AddXY(noOrderTurningPoint, noOrderModelData[noOrderTurningPoint])];
+                point.Label = point.AxisLabel = startDate.AddDays(noOrderTurningPoint).ToShortDateString();
+            }
+
+            {
                 var orderDaySeries = chart.Series.Add("'Stay home' order date");
                 orderDaySeries.Legend = legend.Name;
                 orderDaySeries.ChartType = SeriesChartType.Point;
@@ -320,8 +370,9 @@ namespace COVID
 
             while (!stop)
             {
-                foreach (var model in GetRandomModels())
+                foreach (var m in GetRandomModels())
                 {
+                    var model = m;
                     var error = CalculateError(model, timePoints, results, actualData, valuesCache);
                     if (bestModel == null || bestError > error)
                     {
@@ -330,25 +381,34 @@ namespace COVID
                         ConsoleWriteLine($"Error: {bestError}, {bestModel}");
                     }
 
-                    if (error < bestError * 2)
+                    if (error < bestError * factor)
                     {
                         bool cont;
                         do
                         {
+                            ConsoleWrite(".");
                             cont = false;
                             foreach (var nearbyModel in GetNearbyModels(model))
                             {
                                 var nearbyError = CalculateError(nearbyModel, timePoints, results, actualData, valuesCache);
-                                if (bestError > nearbyError)
+                                if (error > nearbyError)
                                 {
-                                    bestModel = nearbyModel;
-                                    bestError = nearbyError;
-                                    ConsoleWriteLine($"Error: {bestError}, {bestModel}");
+                                    model = nearbyModel;
+                                    error = nearbyError;
                                     cont = true;
                                 }
                             }
                         }
-                        while (cont);
+                        while (cont && !stop);
+                        ConsoleWriteLine();
+
+                        error = CalculateError(model, timePoints, results, actualData, valuesCache);
+                        if (bestError > error)
+                        {
+                            bestModel = model;
+                            bestError = error;
+                            ConsoleWriteLine($"Error: {bestError}, {bestModel}");
+                        }
                     }
                 }
             }
@@ -396,28 +456,26 @@ namespace COVID
 
         private IEnumerable<Model> GetNearbyModels(Model model)
         {
-            double factor = 100;
-
-            var dF0 = f0Range.Diff / factor;
+            var dF0 = f0Range.Diff * step;
             yield return new Model(model.F0 + dF0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2);
             yield return new Model(model.F0 - dF0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2);
 
-            var dR = rRange.Diff / factor;
+            var dR = rRange.Diff * step;
             yield return new Model(model.F0, model.R + dR, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2);
             yield return new Model(model.F0, model.R - dR, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2);
 
-            var dO = orderDayRange.Diff / factor;
+            var dO = orderDayRange.Diff * step;
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay + dO, model.C1, model.C2, model.P1, model.P2);
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay - dO, model.C1, model.C2, model.P1, model.P2);
 
-            var dC = cRange.Diff / factor;
+            var dC = cRange.Diff * step;
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1 + dC, model.C2, model.P1, model.P2);
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1 - dC, model.C2, model.P1, model.P2);
 
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2 + dC, model.P1, model.P2);
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2 - dC, model.P1, model.P2);
 
-            var dP = pRange.Diff / factor;
+            var dP = pRange.Diff * step;
             if (model.P1 == model.P2)
             {
                 yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 + dP, model.P2 + dP);
@@ -434,7 +492,7 @@ namespace COVID
         private double CalculateError(Model model, double[] timePoints, double[] results, double[] actualData, List<double> valuesCache)
         {
             model.Calculate(timePoints, results, valuesCache);
-            double error = 0;
+            var diffs = new List<double>();
             for (int i = actualData.Length - 1 - skip; i >= windowSize; i--)
             {
                 var value1 = results[i] - results[i - windowSize];
@@ -450,10 +508,12 @@ namespace COVID
                         diff /= avgValue;
                     }
 
-                    error += diff * diff;
+                    diffs.Add(diff * diff);
                 }
             }
-            return error;
+
+            diffs.Sort();
+            return diffs.Take(diffs.Count - skip).Sum();
         }
 
         private void stopButton_Click(object sender, EventArgs e)

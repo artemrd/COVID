@@ -53,6 +53,10 @@
             this.windowTextBox = new System.Windows.Forms.TextBox();
             this.windowLabel = new System.Windows.Forms.Label();
             this.isWeightedCheckBox = new System.Windows.Forms.CheckBox();
+            this.stepTextBox = new System.Windows.Forms.TextBox();
+            this.stepLabel = new System.Windows.Forms.Label();
+            this.factorTextBox = new System.Windows.Forms.TextBox();
+            this.factorLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.chart)).BeginInit();
             this.SuspendLayout();
             // 
@@ -70,7 +74,7 @@
             // 
             // startButton
             // 
-            this.startButton.Location = new System.Drawing.Point(1946, 412);
+            this.startButton.Location = new System.Drawing.Point(1946, 458);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(75, 36);
             this.startButton.TabIndex = 1;
@@ -90,7 +94,7 @@
             // 
             // stopButton
             // 
-            this.stopButton.Location = new System.Drawing.Point(1946, 454);
+            this.stopButton.Location = new System.Drawing.Point(1946, 500);
             this.stopButton.Name = "stopButton";
             this.stopButton.Size = new System.Drawing.Size(75, 36);
             this.stopButton.TabIndex = 3;
@@ -248,18 +252,54 @@
             // isWeightedCheckBox
             // 
             this.isWeightedCheckBox.AutoSize = true;
-            this.isWeightedCheckBox.Location = new System.Drawing.Point(1815, 296);
+            this.isWeightedCheckBox.Location = new System.Drawing.Point(1815, 359);
             this.isWeightedCheckBox.Name = "isWeightedCheckBox";
             this.isWeightedCheckBox.Size = new System.Drawing.Size(103, 24);
             this.isWeightedCheckBox.TabIndex = 28;
             this.isWeightedCheckBox.Text = "Weighted";
             this.isWeightedCheckBox.UseVisualStyleBackColor = true;
             // 
+            // stepTextBox
+            // 
+            this.stepTextBox.Location = new System.Drawing.Point(1815, 295);
+            this.stepTextBox.Name = "stepTextBox";
+            this.stepTextBox.Size = new System.Drawing.Size(100, 26);
+            this.stepTextBox.TabIndex = 29;
+            // 
+            // stepLabel
+            // 
+            this.stepLabel.AutoSize = true;
+            this.stepLabel.Location = new System.Drawing.Point(1766, 298);
+            this.stepLabel.Name = "stepLabel";
+            this.stepLabel.Size = new System.Drawing.Size(43, 20);
+            this.stepLabel.TabIndex = 30;
+            this.stepLabel.Text = "Step";
+            // 
+            // factorTextBox
+            // 
+            this.factorTextBox.Location = new System.Drawing.Point(1815, 327);
+            this.factorTextBox.Name = "factorTextBox";
+            this.factorTextBox.Size = new System.Drawing.Size(100, 26);
+            this.factorTextBox.TabIndex = 31;
+            // 
+            // factorLabel
+            // 
+            this.factorLabel.AutoSize = true;
+            this.factorLabel.Location = new System.Drawing.Point(1754, 330);
+            this.factorLabel.Name = "factorLabel";
+            this.factorLabel.Size = new System.Drawing.Size(55, 20);
+            this.factorLabel.TabIndex = 32;
+            this.factorLabel.Text = "Factor";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2033, 1298);
+            this.Controls.Add(this.factorLabel);
+            this.Controls.Add(this.factorTextBox);
+            this.Controls.Add(this.stepLabel);
+            this.Controls.Add(this.stepTextBox);
             this.Controls.Add(this.isWeightedCheckBox);
             this.Controls.Add(this.windowLabel);
             this.Controls.Add(this.windowTextBox);
@@ -319,6 +359,10 @@
         private System.Windows.Forms.TextBox windowTextBox;
         private System.Windows.Forms.Label windowLabel;
         private System.Windows.Forms.CheckBox isWeightedCheckBox;
+        private System.Windows.Forms.TextBox stepTextBox;
+        private System.Windows.Forms.Label stepLabel;
+        private System.Windows.Forms.TextBox factorTextBox;
+        private System.Windows.Forms.Label factorLabel;
     }
 }
 
