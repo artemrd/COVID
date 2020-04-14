@@ -292,6 +292,10 @@ namespace COVID
                     var point = modelSeries.Points[modelSeries.Points.AddXY(i, modelData[i])];
                     point.AxisLabel = startDate.AddDays(i).ToShortDateString();
                     point.ToolTip = Math.Round(modelData[i]).ToString();
+                    if (i == modelData.Length - 1)
+                    {
+                        point.Label = point.ToolTip;
+                    }
                 }
             }
 
@@ -307,6 +311,10 @@ namespace COVID
                     var point = noOrderModelSeries.Points[noOrderModelSeries.Points.AddXY(i, noOrderModelData[i])];
                     point.AxisLabel = startDate.AddDays(i).ToShortDateString();
                     point.ToolTip = Math.Round(noOrderModelData[i]).ToString();
+                    if (i == noOrderModelData.Length - 1)
+                    {
+                        point.Label = point.ToolTip;
+                    }
                 }
             }
 
