@@ -28,7 +28,12 @@ namespace COVID
             return Min + rnd.NextDouble() * Diff;
         }
 
-        public double GetRandom(double max, Random rnd)
+        public double GetRandomMin(double min, Random rnd)
+        {
+            return min + rnd.NextDouble() * (Max - min);
+        }
+
+        public double GetRandomMax(double max, Random rnd)
         {
             return Min + rnd.NextDouble() * (max - Min);
         }

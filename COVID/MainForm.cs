@@ -211,6 +211,8 @@ namespace COVID
                 ConsoleWriteLine(DateTime.Now.ToShortDateString());
                 ConsoleWriteLine($"Error: {error}");
                 ConsoleWriteLine(model.ToString(Environment.NewLine));
+                ConsoleWriteLine($"F: {Math.Round(results[results.Length - 1])}");
+                ConsoleWriteLine($"F1: {Math.Round(noOrderResults[noOrderResults.Length - 1])}");
 
                 chart.Invoke(new Action<double[], double[], DateTime, int, double, double[], int>(PopulateChart), new object[] { actualData, results, startDate, turningPoint, model.OrderDay, noOrderResults, noOrderTurningPoint });
             });
@@ -426,8 +428,10 @@ namespace COVID
 
         private IEnumerable<Model> GetRandomModels()
         {
-            var c1 = cRange.GetRandom(rnd);
-            var c2 = cRange.GetRandom(c1, rnd);
+            // c1 > c2.
+            var c = cRange.GetRandom(rnd);
+            var c1 = cRange.GetRandomMin(c, rnd);
+            var c2 = cRange.GetRandomMax(c, rnd);
 
             var model = new Model(
                 f0Range.GetRandom(rnd),
