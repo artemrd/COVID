@@ -29,6 +29,7 @@ namespace COVID
         double step;
         double factor;
         bool isWeighted;
+        bool limitC;
 
         public MainForm()
         {
@@ -75,6 +76,7 @@ namespace COVID
             step = 0.01;
             factor = 1.5;
             isWeighted = false;
+            limitC = false;
 
             f0Range.ToView(f0MinTextBox, f0MaxTextBox);
             rRange.ToView(rMinTextBox, rMaxTextBox);
@@ -87,6 +89,7 @@ namespace COVID
             stepTextBox.Text = step.ToString();
             factorTextBox.Text = factor.ToString();
             isWeightedCheckBox.Checked = isWeighted;
+            limitCCheckBox.Checked = limitC;
 
             SetStop(true);
         }
@@ -109,6 +112,7 @@ namespace COVID
                 step = Convert.ToDouble(stepTextBox.Text);
                 factor = Convert.ToDouble(factorTextBox.Text);
                 isWeighted = isWeightedCheckBox.Checked;
+                limitC = limitCCheckBox.Checked;
             }
             catch (Exception ex)
             {
@@ -428,10 +432,18 @@ namespace COVID
 
         private IEnumerable<Model> GetRandomModels()
         {
-            // c1 > c2.
-            var c = cRange.GetRandom(rnd);
-            var c1 = cRange.GetRandomMin(c, rnd);
-            var c2 = cRange.GetRandomMax(c, rnd);
+            double c1, c2;
+            if (limitC)
+            {
+                var c = cRange.GetRandom(rnd);
+                c1 = cRange.GetRandomMin(c, rnd);
+                c2 = cRange.GetRandomMax(c, rnd);
+            }
+            else
+            {
+                c1 = cRange.GetRandom(rnd);
+                c2 = cRange.GetRandom(rnd);
+            }
 
             var model = new Model(
                 f0Range.GetRandom(rnd),

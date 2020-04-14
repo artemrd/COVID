@@ -57,6 +57,7 @@
             this.stepLabel = new System.Windows.Forms.Label();
             this.factorTextBox = new System.Windows.Forms.TextBox();
             this.factorLabel = new System.Windows.Forms.Label();
+            this.limitCCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.chart)).BeginInit();
             this.SuspendLayout();
             // 
@@ -291,11 +292,22 @@
             this.factorLabel.TabIndex = 32;
             this.factorLabel.Text = "Factor";
             // 
+            // limitCCheckBox
+            // 
+            this.limitCCheckBox.AutoSize = true;
+            this.limitCCheckBox.Location = new System.Drawing.Point(1815, 389);
+            this.limitCCheckBox.Name = "limitCCheckBox";
+            this.limitCCheckBox.Size = new System.Drawing.Size(83, 24);
+            this.limitCCheckBox.TabIndex = 33;
+            this.limitCCheckBox.Text = "Limit C";
+            this.limitCCheckBox.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2033, 1298);
+            this.Controls.Add(this.limitCCheckBox);
             this.Controls.Add(this.factorLabel);
             this.Controls.Add(this.factorTextBox);
             this.Controls.Add(this.stepLabel);
@@ -363,6 +375,7 @@
         private System.Windows.Forms.Label stepLabel;
         private System.Windows.Forms.TextBox factorTextBox;
         private System.Windows.Forms.Label factorLabel;
+        private System.Windows.Forms.CheckBox limitCCheckBox;
     }
 }
 
