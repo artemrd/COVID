@@ -74,7 +74,7 @@ namespace COVID
             skip = 0;
             windowSize = 1;
             step = 0.01;
-            factor = 2;
+            factor = 1.5;
             isWeighted = false;
             limitC = false;
 
