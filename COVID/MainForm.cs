@@ -97,7 +97,6 @@ namespace COVID
         private void startButton_Click(object sender, EventArgs e)
         {
             SetStop(false);
-            consoleTextBox.Clear();
 
             try
             {
@@ -122,103 +121,10 @@ namespace COVID
 
             Task.Run(() =>
             {
-                var timePoints = new double[actualData.Length];
-                for (int i = 0; i < timePoints.Length; i++)
-                {
-                    timePoints[i] = i;
-                }
-                var results = new double[timePoints.Length];
-
+                var results = new double[actualData.Length];
                 var valuesCache = new List<double>();
 
-                var model = FindBestModel(timePoints, results, actualData, valuesCache);
-
-                ConsoleWriteLine();
-
-                var error = CalculateError(model, timePoints, results, actualData, valuesCache);
-
-                // Extrapolate 2 months.
-                timePoints = new double[actualData.Length + 60];
-                for (int i = 0; i < timePoints.Length; i++)
-                {
-                    timePoints[i] = i;
-                }
-                results = new double[timePoints.Length];
-                model.Calculate(timePoints, results, valuesCache);
-
-                var noOrderResults = new double[timePoints.Length];
-                var noOrderModel = new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C1, model.P1, model.P1);
-                noOrderModel.Calculate(timePoints, noOrderResults, valuesCache);
-
-                int turningPoint = -1;
-                int noOrderTurningPoint = -1;
-                for (int i = 0; i < timePoints.Length; i++)
-                {
-                    string d2FLabel = string.Empty;
-                    if (i > 0 && i < results.Length - 1)
-                    {
-                        {
-                            double d2F = results[i - 1] + results[i + 1] - 2 * results[i];
-                            if (d2F > 0)
-                            {
-                                d2FLabel = "+";
-                                turningPoint = -1;
-                            }
-                            else if (d2F < 0)
-                            {
-                                d2FLabel = "-";
-                                if (turningPoint < 0)
-                                {
-                                    turningPoint = i;
-                                }
-                            }
-                        }
-
-                        {
-                            double noOrderD2F = noOrderResults[i - 1] + noOrderResults[i + 1] - 2 * noOrderResults[i];
-                            if (noOrderD2F > 0)
-                            {
-                                noOrderTurningPoint = -1;
-                            }
-                            else if (noOrderD2F < 0)
-                            {
-                                if (noOrderTurningPoint < 0)
-                                {
-                                    noOrderTurningPoint = i;
-                                }
-                            }
-                        }
-                    }
-
-                    string ad2FLabel = string.Empty;
-                    if (i > 0 && i < actualData.Length - 1)
-                    {
-                        double ad2F = actualData[i - 1] + actualData[i + 1] - 2 * actualData[i];
-                        if (ad2F > 0)
-                        {
-                            ad2FLabel = "+";
-                        }
-                        else if (ad2F < 0)
-                        {
-                            ad2FLabel = "-";
-                        }
-                    }
-
-                    var actualDataPoint = string.Empty;
-                    if (i < actualData.Length)
-                    {
-                        actualDataPoint = actualData[i].ToString();
-                    }
-                    ConsoleWriteLine($"{startDate.AddDays(i).ToShortDateString(),-10} {timePoints[i],-8} {results[i],-24} {Math.Round(results[i]),-8} {d2FLabel,-1} {actualDataPoint,-8} {ad2FLabel}");
-                }
-                ConsoleWriteLine();
-                ConsoleWriteLine(DateTime.Now.ToShortDateString());
-                ConsoleWriteLine($"Error: {error}");
-                ConsoleWriteLine(model.ToString(Environment.NewLine));
-                ConsoleWriteLine($"F: {Math.Round(results[results.Length - 1])}");
-                ConsoleWriteLine($"F1: {Math.Round(noOrderResults[noOrderResults.Length - 1])}");
-
-                chart.Invoke(new Action<double[], double[], DateTime, int, double, double[], int>(PopulateChart), new object[] { actualData, results, startDate, turningPoint, model.OrderDay, noOrderResults, noOrderTurningPoint });
+                FindBestModel(results, valuesCache);
             });
         }
 
@@ -250,8 +156,91 @@ namespace COVID
             }
         }
 
-        private void PopulateChart(double[] actualData, double[] modelData, DateTime startDate, int turningPoint, double orderDay, double[] noOrderModelData, int noOrderTurningPoint)
+        private void DisplayBestModelData()
         {
+            consoleTextBox.Clear();
+
+            // Extrapolate 2 months.
+            var modelData = new double[actualData.Length + 60];
+            var valuesCache = new List<double>();
+            var model = bestModel;
+
+            model.Calculate(modelData, valuesCache);
+            var error = CalculateError(model, modelData, valuesCache);
+
+            var noOrderModelData = new double[modelData.Length];
+            var noOrderModel = new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C1, model.P1, model.P1);
+            noOrderModel.Calculate(noOrderModelData, valuesCache);
+
+            int turningPoint = -1;
+            int noOrderTurningPoint = -1;
+            for (int i = 0; i < modelData.Length; i++)
+            {
+                string d2FLabel = string.Empty;
+                if (i > 0 && i < modelData.Length - 1)
+                {
+                    {
+                        double d2F = modelData[i - 1] + modelData[i + 1] - 2 * modelData[i];
+                        if (d2F > 0)
+                        {
+                            d2FLabel = "+";
+                            turningPoint = -1;
+                        }
+                        else if (d2F < 0)
+                        {
+                            d2FLabel = "-";
+                            if (turningPoint < 0)
+                            {
+                                turningPoint = i;
+                            }
+                        }
+                    }
+
+                    {
+                        double noOrderD2F = noOrderModelData[i - 1] + noOrderModelData[i + 1] - 2 * noOrderModelData[i];
+                        if (noOrderD2F > 0)
+                        {
+                            noOrderTurningPoint = -1;
+                        }
+                        else if (noOrderD2F < 0)
+                        {
+                            if (noOrderTurningPoint < 0)
+                            {
+                                noOrderTurningPoint = i;
+                            }
+                        }
+                    }
+                }
+
+                string ad2FLabel = string.Empty;
+                if (i > 0 && i < actualData.Length - 1)
+                {
+                    double ad2F = actualData[i - 1] + actualData[i + 1] - 2 * actualData[i];
+                    if (ad2F > 0)
+                    {
+                        ad2FLabel = "+";
+                    }
+                    else if (ad2F < 0)
+                    {
+                        ad2FLabel = "-";
+                    }
+                }
+
+                var actualDataPoint = string.Empty;
+                if (i < actualData.Length)
+                {
+                    actualDataPoint = actualData[i].ToString();
+                }
+                // ConsoleWriteLine($"{startDate.AddDays(i).ToShortDateString(),-10} {i,-8} {modelData[i],-24} {Math.Round(modelData[i]),-8} {d2FLabel,-1} {actualDataPoint,-8} {ad2FLabel}");
+            }
+            //ConsoleWriteLine();
+            ConsoleWriteLine(DateTime.Now.ToShortDateString());
+            ConsoleWriteLine($"Error: {error}");
+            ConsoleWriteLine(model.ToString(Environment.NewLine));
+            ConsoleWriteLine($"F: {Math.Round(modelData[modelData.Length - 1])}");
+            ConsoleWriteLine($"F1: {Math.Round(noOrderModelData[noOrderModelData.Length - 1])}");
+            ConsoleWriteLine();
+
             chart.Series.Clear();
             chart.Legends.Clear();
 
@@ -338,6 +327,7 @@ namespace COVID
                 }
             }
 
+            if (turningPoint >= 0)
             {
                 var turningPointSeries = chart.Series.Add("Turning point");
                 turningPointSeries.Legend = legend.Name;
@@ -348,6 +338,7 @@ namespace COVID
                 point.Label = point.AxisLabel = startDate.AddDays(turningPoint).ToShortDateString();
             }
 
+            if (noOrderTurningPoint >= 0)
             {
                 var noOrderTurningPointSeries = chart.Series.Add("No order turning point");
                 noOrderTurningPointSeries.Legend = legend.Name;
@@ -364,22 +355,19 @@ namespace COVID
                 orderDaySeries.ChartType = SeriesChartType.Point;
                 orderDaySeries.Color = Color.Black;
                 orderDaySeries.BorderWidth = 9;
-                var iOrderDay = (int)Math.Round(orderDay);
+                var iOrderDay = (int)Math.Round(model.OrderDay);
                 var point = orderDaySeries.Points[orderDaySeries.Points.AddXY(iOrderDay, modelData[iOrderDay])];
                 point.Label = point.AxisLabel = startDate.AddDays(iOrderDay).ToShortDateString();
             }
         }
 
-        private Model FindBestModel(double[] timePoints, double[] results, double[] actualData, List<double> valuesCache)
+        private void FindBestModel(double[] results, List<double> valuesCache)
         {
             double bestError = 0;
             if (bestModel != null)
             {
-                bestError = CalculateError(bestModel, timePoints, results, actualData, valuesCache);
-                ConsoleWriteLine(DateTime.Now.ToShortDateString());
-                ConsoleWriteLine($"Error: {bestError}");
-                ConsoleWriteLine(bestModel.ToString("\r\n"));
-                ConsoleWriteLine();
+                bestError = CalculateError(bestModel, results, valuesCache);
+                chart.Invoke(new Action(DisplayBestModelData));
             }
 
             while (!stop)
@@ -387,12 +375,12 @@ namespace COVID
                 foreach (var m in GetRandomModels())
                 {
                     var model = m;
-                    var error = CalculateError(model, timePoints, results, actualData, valuesCache);
+                    var error = CalculateError(model, results, valuesCache);
                     if (bestModel == null || bestError > error)
                     {
                         bestModel = model;
                         bestError = error;
-                        ConsoleWriteLine($"Error: {bestError}, {bestModel}");
+                        chart.Invoke(new Action(DisplayBestModelData));
                     }
 
                     if (error < bestError * factor)
@@ -404,7 +392,7 @@ namespace COVID
                             cont = false;
                             foreach (var nearbyModel in GetNearbyModels(model))
                             {
-                                var nearbyError = CalculateError(nearbyModel, timePoints, results, actualData, valuesCache);
+                                var nearbyError = CalculateError(nearbyModel, results, valuesCache);
                                 if (error > nearbyError)
                                 {
                                     model = nearbyModel;
@@ -416,33 +404,31 @@ namespace COVID
                         while (cont && !stop);
                         ConsoleWriteLine();
 
-                        error = CalculateError(model, timePoints, results, actualData, valuesCache);
+                        error = CalculateError(model, results, valuesCache);
                         if (bestError > error)
                         {
                             bestModel = model;
                             bestError = error;
-                            ConsoleWriteLine($"Error: {bestError}, {bestModel}");
+                            chart.Invoke(new Action(DisplayBestModelData));
                         }
                     }
                 }
             }
-
-            return bestModel;
         }
 
         private IEnumerable<Model> GetRandomModels()
         {
-            double c1, c2;
+            var c1 = cRange.GetRandom(rnd);
+            var c2 = cRange.GetRandom(rnd);
             if (limitC)
             {
-                var c = cRange.GetRandom(rnd);
-                c1 = cRange.GetRandomMin(c, rnd);
-                c2 = cRange.GetRandomMax(c, rnd);
-            }
-            else
-            {
-                c1 = cRange.GetRandom(rnd);
-                c2 = cRange.GetRandom(rnd);
+                // c1 > c2.
+                if (c1 < c2)
+                {
+                    var tmp = c1;
+                    c1 = c2;
+                    c2 = tmp;
+                }
             }
 
             var model = new Model(
@@ -513,9 +499,9 @@ namespace COVID
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2 - dP);
         }
 
-        private double CalculateError(Model model, double[] timePoints, double[] results, double[] actualData, List<double> valuesCache)
+        private double CalculateError(Model model, double[] results, List<double> valuesCache)
         {
-            model.Calculate(timePoints, results, valuesCache);
+            model.Calculate(results, valuesCache);
             var diffs = new List<double>();
             for (int i = actualData.Length - 1 - skip; i >= windowSize; i--)
             {

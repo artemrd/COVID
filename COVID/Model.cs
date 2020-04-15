@@ -40,30 +40,25 @@ namespace COVID
 
         public double P2 { get; }
 
-        public void Calculate(double[] timePoints, double[] results, List<double> valuesCache)
+        public void Calculate(double[] results, List<double> valuesCache)
         {
             valuesCache.Clear();
 
-            var currentPointIndex = 0;
-            var currentPoint = timePoints[currentPointIndex];
+            var currentPoint = 0;
 
             var i = 0;
             var rShift = (int)Math.Round(R / dt);
             double value = F0;
             valuesCache.Add(value);
-            while (currentPointIndex < timePoints.Length)
+            while (currentPoint < results.Length)
             {
                 double t = i * dt;
 
                 if (t >= currentPoint)
                 {
-                    results[currentPointIndex] = value;
-                    currentPointIndex++;
-                    if (currentPointIndex < timePoints.Length)
-                    {
-                        currentPoint = timePoints[currentPointIndex];
-                    }
-                    else
+                    results[currentPoint] = value;
+                    currentPoint++;
+                    if (currentPoint >= results.Length)
                     {
                         break;
                     }

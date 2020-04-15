@@ -28,16 +28,6 @@ namespace COVID
             return Min + rnd.NextDouble() * Diff;
         }
 
-        public double GetRandomMin(double min, Random rnd)
-        {
-            return min + rnd.NextDouble() * (Max - min);
-        }
-
-        public double GetRandomMax(double max, Random rnd)
-        {
-            return Min + rnd.NextDouble() * (max - Min);
-        }
-
         public void ToView(TextBox minTextBox, TextBox maxTextBox)
         {
             minTextBox.Text = Min.ToString();
