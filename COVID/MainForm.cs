@@ -237,8 +237,8 @@ namespace COVID
             ConsoleWriteLine(DateTime.Now.ToShortDateString());
             ConsoleWriteLine($"Error: {error}");
             ConsoleWriteLine(model.ToString(Environment.NewLine));
-            ConsoleWriteLine($"F: {Math.Round(modelData[modelData.Length - 1])}");
             ConsoleWriteLine($"F1: {Math.Round(noOrderModelData[noOrderModelData.Length - 1])}");
+            ConsoleWriteLine($"F2: {Math.Round(modelData[modelData.Length - 1])}");
             ConsoleWriteLine();
 
             chart.Series.Clear();
