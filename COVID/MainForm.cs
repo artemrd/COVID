@@ -28,6 +28,7 @@ namespace COVID
         int windowSize;
         double step;
         double factor;
+        double randomization;
         bool isWeighted;
 
         public MainForm()
@@ -74,6 +75,7 @@ namespace COVID
             windowSize = 1;
             step = 0.01;
             factor = 1.5;
+            randomization = 0.5;
             isWeighted = false;
 
             f0Range.ToView(f0MinTextBox, f0MaxTextBox);
@@ -86,6 +88,7 @@ namespace COVID
             windowTextBox.Text = windowSize.ToString();
             stepTextBox.Text = step.ToString();
             factorTextBox.Text = factor.ToString();
+            randomizationTextBox.Text = randomization.ToString();
             isWeightedCheckBox.Checked = isWeighted;
 
             SetStop(true);
@@ -107,6 +110,7 @@ namespace COVID
                 windowSize = Convert.ToInt32(windowTextBox.Text);
                 step = Convert.ToDouble(stepTextBox.Text);
                 factor = Convert.ToDouble(factorTextBox.Text);
+                randomization = Convert.ToDouble(randomizationTextBox.Text);
                 isWeighted = isWeightedCheckBox.Checked;
             }
             catch (Exception ex)
@@ -423,17 +427,17 @@ namespace COVID
                 pRange.GetRandom(rnd),
                 pRange.GetRandom(rnd));
 
-            if (bestModel != null)
+            if (bestModel != null && randomization > 0)
             {
                 yield return new Model(
-                    rnd.NextDouble() > 0.5 ? bestModel.F0 : f0Range.GetRandom(rnd),
-                    rnd.NextDouble() > 0.5 ? bestModel.R : rRange.GetRandom(rnd),
+                    rnd.NextDouble() > randomization ? bestModel.F0 : f0Range.GetRandom(rnd),
+                    rnd.NextDouble() > randomization ? bestModel.R : rRange.GetRandom(rnd),
                     startDate,
-                    rnd.NextDouble() > 0.5 ? bestModel.OrderDay : orderDayRange.GetRandom(rnd),
-                    rnd.NextDouble() > 0.5 ? bestModel.C1 : cRange.GetRandom(rnd),
-                    rnd.NextDouble() > 0.5 ? bestModel.C2 : cRange.GetRandom(rnd),
-                    rnd.NextDouble() > 0.5 ? bestModel.P1 : pRange.GetRandom(rnd),
-                    rnd.NextDouble() > 0.5 ? bestModel.P2 : pRange.GetRandom(rnd));
+                    rnd.NextDouble() > randomization ? bestModel.OrderDay : orderDayRange.GetRandom(rnd),
+                    rnd.NextDouble() > randomization ? bestModel.C1 : cRange.GetRandom(rnd),
+                    rnd.NextDouble() > randomization ? bestModel.C2 : cRange.GetRandom(rnd),
+                    rnd.NextDouble() > randomization ? bestModel.P1 : pRange.GetRandom(rnd),
+                    rnd.NextDouble() > randomization ? bestModel.P2 : pRange.GetRandom(rnd));
             }
         }
 
