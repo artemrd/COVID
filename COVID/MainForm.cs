@@ -28,7 +28,6 @@ namespace COVID
         int windowSize;
         double step;
         double factor;
-        double randomization;
         bool isWeighted;
 
         public MainForm()
@@ -69,13 +68,12 @@ namespace COVID
             rRange = new ParameterRange(5, 15);
             orderDayRange = new ParameterRange(orderDay, orderDay + 10);
             cRange = new ParameterRange(1E-6, 2E-5);
-            pRange = new ParameterRange(15000, 60000);
+            pRange = new ParameterRange(15000, 100000);
             
             skip = 0;
             windowSize = 1;
             step = 0.01;
             factor = 1.5;
-            randomization = 0.5;
             isWeighted = false;
 
             f0Range.ToView(f0MinTextBox, f0MaxTextBox);
@@ -88,7 +86,6 @@ namespace COVID
             windowTextBox.Text = windowSize.ToString();
             stepTextBox.Text = step.ToString();
             factorTextBox.Text = factor.ToString();
-            randomizationTextBox.Text = randomization.ToString();
             isWeightedCheckBox.Checked = isWeighted;
 
             SetStop(true);
@@ -110,7 +107,6 @@ namespace COVID
                 windowSize = Convert.ToInt32(windowTextBox.Text);
                 step = Convert.ToDouble(stepTextBox.Text);
                 factor = Convert.ToDouble(factorTextBox.Text);
-                randomization = Convert.ToDouble(randomizationTextBox.Text);
                 isWeighted = isWeightedCheckBox.Checked;
             }
             catch (Exception ex)
@@ -427,7 +423,8 @@ namespace COVID
                 pRange.GetRandom(rnd),
                 pRange.GetRandom(rnd));
 
-            if (bestModel != null && randomization > 0)
+            var randomization = rnd.NextDouble();
+            if (bestModel != null)
             {
                 yield return new Model(
                     rnd.NextDouble() > randomization ? bestModel.F0 : f0Range.GetRandom(rnd),

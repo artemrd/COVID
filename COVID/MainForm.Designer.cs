@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.startButton = new System.Windows.Forms.Button();
             this.consoleTextBox = new System.Windows.Forms.TextBox();
@@ -57,8 +57,6 @@
             this.stepLabel = new System.Windows.Forms.Label();
             this.factorTextBox = new System.Windows.Forms.TextBox();
             this.factorLabel = new System.Windows.Forms.Label();
-            this.randomizationLabel = new System.Windows.Forms.Label();
-            this.randomizationTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.chart)).BeginInit();
             this.SuspendLayout();
             // 
@@ -66,8 +64,8 @@
             // 
             this.chart.BorderlineColor = System.Drawing.Color.Gray;
             this.chart.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea1.Name = "ChartArea1";
-            this.chart.ChartAreas.Add(chartArea1);
+            chartArea2.Name = "ChartArea1";
+            this.chart.ChartAreas.Add(chartArea2);
             this.chart.Location = new System.Drawing.Point(12, 12);
             this.chart.Name = "chart";
             this.chart.Size = new System.Drawing.Size(1724, 682);
@@ -254,7 +252,7 @@
             // isWeightedCheckBox
             // 
             this.isWeightedCheckBox.AutoSize = true;
-            this.isWeightedCheckBox.Location = new System.Drawing.Point(1887, 396);
+            this.isWeightedCheckBox.Location = new System.Drawing.Point(1887, 364);
             this.isWeightedCheckBox.Name = "isWeightedCheckBox";
             this.isWeightedCheckBox.Size = new System.Drawing.Size(103, 24);
             this.isWeightedCheckBox.TabIndex = 28;
@@ -293,29 +291,11 @@
             this.factorLabel.TabIndex = 32;
             this.factorLabel.Text = "Factor";
             // 
-            // randomizationLabel
-            // 
-            this.randomizationLabel.AutoSize = true;
-            this.randomizationLabel.Location = new System.Drawing.Point(1765, 367);
-            this.randomizationLabel.Name = "randomizationLabel";
-            this.randomizationLabel.Size = new System.Drawing.Size(116, 20);
-            this.randomizationLabel.TabIndex = 33;
-            this.randomizationLabel.Text = "Randomization";
-            // 
-            // randomizationTextBox
-            // 
-            this.randomizationTextBox.Location = new System.Drawing.Point(1887, 364);
-            this.randomizationTextBox.Name = "randomizationTextBox";
-            this.randomizationTextBox.Size = new System.Drawing.Size(100, 26);
-            this.randomizationTextBox.TabIndex = 34;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2111, 1298);
-            this.Controls.Add(this.randomizationTextBox);
-            this.Controls.Add(this.randomizationLabel);
             this.Controls.Add(this.factorLabel);
             this.Controls.Add(this.factorTextBox);
             this.Controls.Add(this.stepLabel);
@@ -383,8 +363,6 @@
         private System.Windows.Forms.Label stepLabel;
         private System.Windows.Forms.TextBox factorTextBox;
         private System.Windows.Forms.Label factorLabel;
-        private System.Windows.Forms.Label randomizationLabel;
-        private System.Windows.Forms.TextBox randomizationTextBox;
     }
 }
 
