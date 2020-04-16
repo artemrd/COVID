@@ -68,7 +68,7 @@ namespace COVID
             rRange = new ParameterRange(5, 15);
             orderDayRange = new ParameterRange(orderDay, orderDay + 10);
             cRange = new ParameterRange(1E-6, 2E-5);
-            pRange = new ParameterRange(15000, 100000);
+            pRange = new ParameterRange(15000, 150000);
             
             skip = 0;
             windowSize = 1;
