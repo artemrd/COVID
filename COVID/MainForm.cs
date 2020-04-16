@@ -29,7 +29,6 @@ namespace COVID
         double step;
         double factor;
         bool isWeighted;
-        bool limitC;
 
         public MainForm()
         {
@@ -66,7 +65,7 @@ namespace COVID
             var orderDay = (orderDate - startDate).TotalDays;
 
             f0Range = new ParameterRange(0.05, 0.25);
-            rRange = new ParameterRange(5, 30);
+            rRange = new ParameterRange(5, 15);
             orderDayRange = new ParameterRange(orderDay, orderDay + 10);
             cRange = new ParameterRange(1E-6, 2E-5);
             pRange = new ParameterRange(15000, 60000);
@@ -76,7 +75,6 @@ namespace COVID
             step = 0.01;
             factor = 1.5;
             isWeighted = false;
-            limitC = false;
 
             f0Range.ToView(f0MinTextBox, f0MaxTextBox);
             rRange.ToView(rMinTextBox, rMaxTextBox);
@@ -89,7 +87,6 @@ namespace COVID
             stepTextBox.Text = step.ToString();
             factorTextBox.Text = factor.ToString();
             isWeightedCheckBox.Checked = isWeighted;
-            limitCCheckBox.Checked = limitC;
 
             SetStop(true);
         }
@@ -111,7 +108,6 @@ namespace COVID
                 step = Convert.ToDouble(stepTextBox.Text);
                 factor = Convert.ToDouble(factorTextBox.Text);
                 isWeighted = isWeightedCheckBox.Checked;
-                limitC = limitCCheckBox.Checked;
             }
             catch (Exception ex)
             {
@@ -385,10 +381,10 @@ namespace COVID
 
                     if (error < bestError * factor)
                     {
+                        ConsoleWrite(".");
                         bool cont;
                         do
                         {
-                            ConsoleWrite(".");
                             cont = false;
                             foreach (var nearbyModel in GetNearbyModels(model))
                             {
@@ -402,7 +398,6 @@ namespace COVID
                             }
                         }
                         while (cont && !stop);
-                        ConsoleWriteLine();
 
                         error = CalculateError(model, results, valuesCache);
                         if (bestError > error)
@@ -418,50 +413,28 @@ namespace COVID
 
         private IEnumerable<Model> GetRandomModels()
         {
-            var c1 = cRange.GetRandom(rnd);
-            var c2 = cRange.GetRandom(rnd);
-            if (limitC)
-            {
-                // c1 > c2.
-                if (c1 < c2)
-                {
-                    var tmp = c1;
-                    c1 = c2;
-                    c2 = tmp;
-                }
-            }
-
-            var model = new Model(
+            yield return new Model(
                 f0Range.GetRandom(rnd),
                 rRange.GetRandom(rnd),
                 startDate,
                 orderDayRange.GetRandom(rnd),
-                c1,
-                c2,
+                cRange.GetRandom(rnd),
+                cRange.GetRandom(rnd),
                 pRange.GetRandom(rnd),
                 pRange.GetRandom(rnd));
-            
-            yield return model;
 
-            yield return new Model(
-                model.F0,
-                model.R,
-                model.StartDate,
-                model.OrderDay,
-                model.C1,
-                model.C2,
-                model.P1,
-                model.P1);
-
-            yield return new Model(
-                model.F0,
-                model.R,
-                model.StartDate,
-                model.OrderDay,
-                model.C1,
-                model.C2,
-                model.P2,
-                model.P2);
+            if (bestModel != null)
+            {
+                yield return new Model(
+                    rnd.NextDouble() > 0.5 ? bestModel.F0 : f0Range.GetRandom(rnd),
+                    rnd.NextDouble() > 0.5 ? bestModel.R : rRange.GetRandom(rnd),
+                    startDate,
+                    rnd.NextDouble() > 0.5 ? bestModel.OrderDay : orderDayRange.GetRandom(rnd),
+                    rnd.NextDouble() > 0.5 ? bestModel.C1 : cRange.GetRandom(rnd),
+                    rnd.NextDouble() > 0.5 ? bestModel.C2 : cRange.GetRandom(rnd),
+                    rnd.NextDouble() > 0.5 ? bestModel.P1 : pRange.GetRandom(rnd),
+                    rnd.NextDouble() > 0.5 ? bestModel.P2 : pRange.GetRandom(rnd));
+            }
         }
 
         private IEnumerable<Model> GetNearbyModels(Model model)
@@ -486,15 +459,8 @@ namespace COVID
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2 - dC, model.P1, model.P2);
 
             var dP = pRange.Diff * step;
-            if (model.P1 == model.P2)
-            {
-                yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 + dP, model.P2 + dP);
-                yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 - dP, model.P2 - dP);
-            }
-
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 + dP, model.P2);
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 - dP, model.P2);
-
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2 + dP);
             yield return new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2 - dP);
         }
