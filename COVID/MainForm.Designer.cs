@@ -48,11 +48,12 @@
             this.cMinTextBox = new System.Windows.Forms.TextBox();
             this.pMaxTextBox = new System.Windows.Forms.TextBox();
             this.pMinTextBox = new System.Windows.Forms.TextBox();
-            this.isWeightedCheckBox = new System.Windows.Forms.CheckBox();
             this.stepTextBox = new System.Windows.Forms.TextBox();
             this.stepLabel = new System.Windows.Forms.Label();
             this.factorTextBox = new System.Windows.Forms.TextBox();
             this.factorLabel = new System.Windows.Forms.Label();
+            this.trainingParametersLabel = new System.Windows.Forms.Label();
+            this.modelParametersLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.chart)).BeginInit();
             this.SuspendLayout();
             // 
@@ -70,7 +71,7 @@
             // 
             // startButton
             // 
-            this.startButton.Location = new System.Drawing.Point(2018, 431);
+            this.startButton.Location = new System.Drawing.Point(2018, 342);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(75, 36);
             this.startButton.TabIndex = 1;
@@ -90,7 +91,7 @@
             // 
             // stopButton
             // 
-            this.stopButton.Location = new System.Drawing.Point(2018, 473);
+            this.stopButton.Location = new System.Drawing.Point(2018, 384);
             this.stopButton.Name = "stopButton";
             this.stopButton.Size = new System.Drawing.Size(75, 36);
             this.stopButton.TabIndex = 3;
@@ -101,7 +102,7 @@
             // f0Label
             // 
             this.f0Label.AutoSize = true;
-            this.f0Label.Location = new System.Drawing.Point(1853, 20);
+            this.f0Label.Location = new System.Drawing.Point(1853, 35);
             this.f0Label.Name = "f0Label";
             this.f0Label.Size = new System.Drawing.Size(28, 20);
             this.f0Label.TabIndex = 4;
@@ -110,7 +111,7 @@
             // rLabel
             // 
             this.rLabel.AutoSize = true;
-            this.rLabel.Location = new System.Drawing.Point(1860, 52);
+            this.rLabel.Location = new System.Drawing.Point(1860, 67);
             this.rLabel.Name = "rLabel";
             this.rLabel.Size = new System.Drawing.Size(21, 20);
             this.rLabel.TabIndex = 5;
@@ -119,7 +120,7 @@
             // oLabel
             // 
             this.oLabel.AutoSize = true;
-            this.oLabel.Location = new System.Drawing.Point(1860, 84);
+            this.oLabel.Location = new System.Drawing.Point(1860, 99);
             this.oLabel.Name = "oLabel";
             this.oLabel.Size = new System.Drawing.Size(21, 20);
             this.oLabel.TabIndex = 6;
@@ -128,7 +129,7 @@
             // cLabel
             // 
             this.cLabel.AutoSize = true;
-            this.cLabel.Location = new System.Drawing.Point(1860, 116);
+            this.cLabel.Location = new System.Drawing.Point(1860, 131);
             this.cLabel.Name = "cLabel";
             this.cLabel.Size = new System.Drawing.Size(20, 20);
             this.cLabel.TabIndex = 7;
@@ -137,7 +138,7 @@
             // pLabel
             // 
             this.pLabel.AutoSize = true;
-            this.pLabel.Location = new System.Drawing.Point(1861, 148);
+            this.pLabel.Location = new System.Drawing.Point(1861, 163);
             this.pLabel.Name = "pLabel";
             this.pLabel.Size = new System.Drawing.Size(19, 20);
             this.pLabel.TabIndex = 8;
@@ -145,87 +146,77 @@
             // 
             // f0MinTextBox
             // 
-            this.f0MinTextBox.Location = new System.Drawing.Point(1887, 17);
+            this.f0MinTextBox.Location = new System.Drawing.Point(1887, 32);
             this.f0MinTextBox.Name = "f0MinTextBox";
             this.f0MinTextBox.Size = new System.Drawing.Size(100, 26);
             this.f0MinTextBox.TabIndex = 9;
             // 
             // f0MaxTextBox
             // 
-            this.f0MaxTextBox.Location = new System.Drawing.Point(1993, 17);
+            this.f0MaxTextBox.Location = new System.Drawing.Point(1993, 32);
             this.f0MaxTextBox.Name = "f0MaxTextBox";
             this.f0MaxTextBox.Size = new System.Drawing.Size(100, 26);
             this.f0MaxTextBox.TabIndex = 10;
             // 
             // rMaxTextBox
             // 
-            this.rMaxTextBox.Location = new System.Drawing.Point(1993, 49);
+            this.rMaxTextBox.Location = new System.Drawing.Point(1993, 64);
             this.rMaxTextBox.Name = "rMaxTextBox";
             this.rMaxTextBox.Size = new System.Drawing.Size(100, 26);
             this.rMaxTextBox.TabIndex = 13;
             // 
             // rMinTextBox
             // 
-            this.rMinTextBox.Location = new System.Drawing.Point(1887, 49);
+            this.rMinTextBox.Location = new System.Drawing.Point(1887, 64);
             this.rMinTextBox.Name = "rMinTextBox";
             this.rMinTextBox.Size = new System.Drawing.Size(100, 26);
             this.rMinTextBox.TabIndex = 12;
             // 
             // oMaxTextBox
             // 
-            this.oMaxTextBox.Location = new System.Drawing.Point(1993, 81);
+            this.oMaxTextBox.Location = new System.Drawing.Point(1993, 96);
             this.oMaxTextBox.Name = "oMaxTextBox";
             this.oMaxTextBox.Size = new System.Drawing.Size(100, 26);
             this.oMaxTextBox.TabIndex = 16;
             // 
             // oMinTextBox
             // 
-            this.oMinTextBox.Location = new System.Drawing.Point(1887, 81);
+            this.oMinTextBox.Location = new System.Drawing.Point(1887, 96);
             this.oMinTextBox.Name = "oMinTextBox";
             this.oMinTextBox.Size = new System.Drawing.Size(100, 26);
             this.oMinTextBox.TabIndex = 15;
             // 
             // cMaxTextBox
             // 
-            this.cMaxTextBox.Location = new System.Drawing.Point(1993, 113);
+            this.cMaxTextBox.Location = new System.Drawing.Point(1993, 128);
             this.cMaxTextBox.Name = "cMaxTextBox";
             this.cMaxTextBox.Size = new System.Drawing.Size(100, 26);
             this.cMaxTextBox.TabIndex = 19;
             // 
             // cMinTextBox
             // 
-            this.cMinTextBox.Location = new System.Drawing.Point(1887, 113);
+            this.cMinTextBox.Location = new System.Drawing.Point(1887, 128);
             this.cMinTextBox.Name = "cMinTextBox";
             this.cMinTextBox.Size = new System.Drawing.Size(100, 26);
             this.cMinTextBox.TabIndex = 18;
             // 
             // pMaxTextBox
             // 
-            this.pMaxTextBox.Location = new System.Drawing.Point(1993, 145);
+            this.pMaxTextBox.Location = new System.Drawing.Point(1993, 160);
             this.pMaxTextBox.Name = "pMaxTextBox";
             this.pMaxTextBox.Size = new System.Drawing.Size(100, 26);
             this.pMaxTextBox.TabIndex = 22;
             // 
             // pMinTextBox
             // 
-            this.pMinTextBox.Location = new System.Drawing.Point(1887, 145);
+            this.pMinTextBox.Location = new System.Drawing.Point(1887, 160);
             this.pMinTextBox.Name = "pMinTextBox";
             this.pMinTextBox.Size = new System.Drawing.Size(100, 26);
             this.pMinTextBox.TabIndex = 21;
             // 
-            // isWeightedCheckBox
-            // 
-            this.isWeightedCheckBox.AutoSize = true;
-            this.isWeightedCheckBox.Location = new System.Drawing.Point(1887, 322);
-            this.isWeightedCheckBox.Name = "isWeightedCheckBox";
-            this.isWeightedCheckBox.Size = new System.Drawing.Size(103, 24);
-            this.isWeightedCheckBox.TabIndex = 28;
-            this.isWeightedCheckBox.Text = "Weighted";
-            this.isWeightedCheckBox.UseVisualStyleBackColor = true;
-            // 
             // stepTextBox
             // 
-            this.stepTextBox.Location = new System.Drawing.Point(1887, 258);
+            this.stepTextBox.Location = new System.Drawing.Point(1887, 248);
             this.stepTextBox.Name = "stepTextBox";
             this.stepTextBox.Size = new System.Drawing.Size(100, 26);
             this.stepTextBox.TabIndex = 29;
@@ -233,7 +224,7 @@
             // stepLabel
             // 
             this.stepLabel.AutoSize = true;
-            this.stepLabel.Location = new System.Drawing.Point(1838, 261);
+            this.stepLabel.Location = new System.Drawing.Point(1838, 251);
             this.stepLabel.Name = "stepLabel";
             this.stepLabel.Size = new System.Drawing.Size(43, 20);
             this.stepLabel.TabIndex = 30;
@@ -241,7 +232,7 @@
             // 
             // factorTextBox
             // 
-            this.factorTextBox.Location = new System.Drawing.Point(1887, 290);
+            this.factorTextBox.Location = new System.Drawing.Point(1887, 280);
             this.factorTextBox.Name = "factorTextBox";
             this.factorTextBox.Size = new System.Drawing.Size(100, 26);
             this.factorTextBox.TabIndex = 31;
@@ -249,22 +240,41 @@
             // factorLabel
             // 
             this.factorLabel.AutoSize = true;
-            this.factorLabel.Location = new System.Drawing.Point(1826, 293);
+            this.factorLabel.Location = new System.Drawing.Point(1826, 283);
             this.factorLabel.Name = "factorLabel";
             this.factorLabel.Size = new System.Drawing.Size(55, 20);
             this.factorLabel.TabIndex = 32;
             this.factorLabel.Text = "Factor";
+            // 
+            // trainingParametersLabel
+            // 
+            this.trainingParametersLabel.AutoSize = true;
+            this.trainingParametersLabel.Location = new System.Drawing.Point(1883, 225);
+            this.trainingParametersLabel.Name = "trainingParametersLabel";
+            this.trainingParametersLabel.Size = new System.Drawing.Size(150, 20);
+            this.trainingParametersLabel.TabIndex = 33;
+            this.trainingParametersLabel.Text = "Training parameters";
+            // 
+            // modelParametersLabel
+            // 
+            this.modelParametersLabel.AutoSize = true;
+            this.modelParametersLabel.Location = new System.Drawing.Point(1883, 9);
+            this.modelParametersLabel.Name = "modelParametersLabel";
+            this.modelParametersLabel.Size = new System.Drawing.Size(137, 20);
+            this.modelParametersLabel.TabIndex = 34;
+            this.modelParametersLabel.Text = "Model parameters";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2111, 1298);
+            this.Controls.Add(this.modelParametersLabel);
+            this.Controls.Add(this.trainingParametersLabel);
             this.Controls.Add(this.factorLabel);
             this.Controls.Add(this.factorTextBox);
             this.Controls.Add(this.stepLabel);
             this.Controls.Add(this.stepTextBox);
-            this.Controls.Add(this.isWeightedCheckBox);
             this.Controls.Add(this.pMaxTextBox);
             this.Controls.Add(this.pMinTextBox);
             this.Controls.Add(this.cMaxTextBox);
@@ -314,11 +324,12 @@
         private System.Windows.Forms.TextBox cMinTextBox;
         private System.Windows.Forms.TextBox pMaxTextBox;
         private System.Windows.Forms.TextBox pMinTextBox;
-        private System.Windows.Forms.CheckBox isWeightedCheckBox;
         private System.Windows.Forms.TextBox stepTextBox;
         private System.Windows.Forms.Label stepLabel;
         private System.Windows.Forms.TextBox factorTextBox;
         private System.Windows.Forms.Label factorLabel;
+        private System.Windows.Forms.Label trainingParametersLabel;
+        private System.Windows.Forms.Label modelParametersLabel;
     }
 }
 

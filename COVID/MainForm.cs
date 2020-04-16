@@ -25,7 +25,6 @@ namespace COVID
         // Training parameters.
         double step;
         double factor;
-        bool isWeighted;
 
         public MainForm()
         {
@@ -69,7 +68,6 @@ namespace COVID
             
             step = 0.01;
             factor = 1.5;
-            isWeighted = false;
 
             f0Range.ToView(f0MinTextBox, f0MaxTextBox);
             rRange.ToView(rMinTextBox, rMaxTextBox);
@@ -79,7 +77,6 @@ namespace COVID
             
             stepTextBox.Text = step.ToString();
             factorTextBox.Text = factor.ToString();
-            isWeightedCheckBox.Checked = isWeighted;
 
             SetStop(true);
         }
@@ -98,7 +95,6 @@ namespace COVID
                 
                 step = Convert.ToDouble(stepTextBox.Text);
                 factor = Convert.ToDouble(factorTextBox.Text);
-                isWeighted = isWeightedCheckBox.Checked;
             }
             catch (Exception ex)
             {
@@ -467,15 +463,6 @@ namespace COVID
                 var value1 = results[i] - results[i - 1];
                 var value2 = actualData[i] - actualData[i - 1];
                 var diff = value1 - value2;
-
-                if (isWeighted)
-                {
-                    var avg = (value1 + value2) / 2.0;
-                    if (avg != 0)
-                    {
-                        diff /= avg;
-                    }
-                }
 
                 error += diff * diff;
             }
