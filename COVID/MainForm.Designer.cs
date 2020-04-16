@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.startButton = new System.Windows.Forms.Button();
             this.consoleTextBox = new System.Windows.Forms.TextBox();
@@ -48,10 +48,6 @@
             this.cMinTextBox = new System.Windows.Forms.TextBox();
             this.pMaxTextBox = new System.Windows.Forms.TextBox();
             this.pMinTextBox = new System.Windows.Forms.TextBox();
-            this.skipLabel = new System.Windows.Forms.Label();
-            this.skipTextBox = new System.Windows.Forms.TextBox();
-            this.windowTextBox = new System.Windows.Forms.TextBox();
-            this.windowLabel = new System.Windows.Forms.Label();
             this.isWeightedCheckBox = new System.Windows.Forms.CheckBox();
             this.stepTextBox = new System.Windows.Forms.TextBox();
             this.stepLabel = new System.Windows.Forms.Label();
@@ -64,8 +60,8 @@
             // 
             this.chart.BorderlineColor = System.Drawing.Color.Gray;
             this.chart.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea2.Name = "ChartArea1";
-            this.chart.ChartAreas.Add(chartArea2);
+            chartArea1.Name = "ChartArea1";
+            this.chart.ChartAreas.Add(chartArea1);
             this.chart.Location = new System.Drawing.Point(12, 12);
             this.chart.Name = "chart";
             this.chart.Size = new System.Drawing.Size(1724, 682);
@@ -74,7 +70,7 @@
             // 
             // startButton
             // 
-            this.startButton.Location = new System.Drawing.Point(2018, 463);
+            this.startButton.Location = new System.Drawing.Point(2018, 431);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(75, 36);
             this.startButton.TabIndex = 1;
@@ -94,7 +90,7 @@
             // 
             // stopButton
             // 
-            this.stopButton.Location = new System.Drawing.Point(2018, 505);
+            this.stopButton.Location = new System.Drawing.Point(2018, 473);
             this.stopButton.Name = "stopButton";
             this.stopButton.Size = new System.Drawing.Size(75, 36);
             this.stopButton.TabIndex = 3;
@@ -217,42 +213,10 @@
             this.pMinTextBox.Size = new System.Drawing.Size(100, 26);
             this.pMinTextBox.TabIndex = 21;
             // 
-            // skipLabel
-            // 
-            this.skipLabel.AutoSize = true;
-            this.skipLabel.Location = new System.Drawing.Point(1841, 239);
-            this.skipLabel.Name = "skipLabel";
-            this.skipLabel.Size = new System.Drawing.Size(40, 20);
-            this.skipLabel.TabIndex = 24;
-            this.skipLabel.Text = "Skip";
-            // 
-            // skipTextBox
-            // 
-            this.skipTextBox.Location = new System.Drawing.Point(1887, 236);
-            this.skipTextBox.Name = "skipTextBox";
-            this.skipTextBox.Size = new System.Drawing.Size(100, 26);
-            this.skipTextBox.TabIndex = 25;
-            // 
-            // windowTextBox
-            // 
-            this.windowTextBox.Location = new System.Drawing.Point(1887, 268);
-            this.windowTextBox.Name = "windowTextBox";
-            this.windowTextBox.Size = new System.Drawing.Size(100, 26);
-            this.windowTextBox.TabIndex = 26;
-            // 
-            // windowLabel
-            // 
-            this.windowLabel.AutoSize = true;
-            this.windowLabel.Location = new System.Drawing.Point(1816, 271);
-            this.windowLabel.Name = "windowLabel";
-            this.windowLabel.Size = new System.Drawing.Size(65, 20);
-            this.windowLabel.TabIndex = 27;
-            this.windowLabel.Text = "Window";
-            // 
             // isWeightedCheckBox
             // 
             this.isWeightedCheckBox.AutoSize = true;
-            this.isWeightedCheckBox.Location = new System.Drawing.Point(1887, 364);
+            this.isWeightedCheckBox.Location = new System.Drawing.Point(1887, 322);
             this.isWeightedCheckBox.Name = "isWeightedCheckBox";
             this.isWeightedCheckBox.Size = new System.Drawing.Size(103, 24);
             this.isWeightedCheckBox.TabIndex = 28;
@@ -261,7 +225,7 @@
             // 
             // stepTextBox
             // 
-            this.stepTextBox.Location = new System.Drawing.Point(1887, 300);
+            this.stepTextBox.Location = new System.Drawing.Point(1887, 258);
             this.stepTextBox.Name = "stepTextBox";
             this.stepTextBox.Size = new System.Drawing.Size(100, 26);
             this.stepTextBox.TabIndex = 29;
@@ -269,7 +233,7 @@
             // stepLabel
             // 
             this.stepLabel.AutoSize = true;
-            this.stepLabel.Location = new System.Drawing.Point(1838, 303);
+            this.stepLabel.Location = new System.Drawing.Point(1838, 261);
             this.stepLabel.Name = "stepLabel";
             this.stepLabel.Size = new System.Drawing.Size(43, 20);
             this.stepLabel.TabIndex = 30;
@@ -277,7 +241,7 @@
             // 
             // factorTextBox
             // 
-            this.factorTextBox.Location = new System.Drawing.Point(1887, 332);
+            this.factorTextBox.Location = new System.Drawing.Point(1887, 290);
             this.factorTextBox.Name = "factorTextBox";
             this.factorTextBox.Size = new System.Drawing.Size(100, 26);
             this.factorTextBox.TabIndex = 31;
@@ -285,7 +249,7 @@
             // factorLabel
             // 
             this.factorLabel.AutoSize = true;
-            this.factorLabel.Location = new System.Drawing.Point(1826, 335);
+            this.factorLabel.Location = new System.Drawing.Point(1826, 293);
             this.factorLabel.Name = "factorLabel";
             this.factorLabel.Size = new System.Drawing.Size(55, 20);
             this.factorLabel.TabIndex = 32;
@@ -301,10 +265,6 @@
             this.Controls.Add(this.stepLabel);
             this.Controls.Add(this.stepTextBox);
             this.Controls.Add(this.isWeightedCheckBox);
-            this.Controls.Add(this.windowLabel);
-            this.Controls.Add(this.windowTextBox);
-            this.Controls.Add(this.skipTextBox);
-            this.Controls.Add(this.skipLabel);
             this.Controls.Add(this.pMaxTextBox);
             this.Controls.Add(this.pMinTextBox);
             this.Controls.Add(this.cMaxTextBox);
@@ -354,10 +314,6 @@
         private System.Windows.Forms.TextBox cMinTextBox;
         private System.Windows.Forms.TextBox pMaxTextBox;
         private System.Windows.Forms.TextBox pMinTextBox;
-        private System.Windows.Forms.Label skipLabel;
-        private System.Windows.Forms.TextBox skipTextBox;
-        private System.Windows.Forms.TextBox windowTextBox;
-        private System.Windows.Forms.Label windowLabel;
         private System.Windows.Forms.CheckBox isWeightedCheckBox;
         private System.Windows.Forms.TextBox stepTextBox;
         private System.Windows.Forms.Label stepLabel;

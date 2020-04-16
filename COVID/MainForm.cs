@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -24,8 +23,6 @@ namespace COVID
         ParameterRange pRange;
         
         // Training parameters.
-        int skip;
-        int windowSize;
         double step;
         double factor;
         bool isWeighted;
@@ -70,8 +67,6 @@ namespace COVID
             cRange = new ParameterRange(1E-6, 2E-5);
             pRange = new ParameterRange(15000, 150000);
             
-            skip = 0;
-            windowSize = 1;
             step = 0.01;
             factor = 1.5;
             isWeighted = false;
@@ -82,8 +77,6 @@ namespace COVID
             cRange.ToView(cMinTextBox, cMaxTextBox);
             pRange.ToView(pMinTextBox, pMaxTextBox);
             
-            skipTextBox.Text = skip.ToString();
-            windowTextBox.Text = windowSize.ToString();
             stepTextBox.Text = step.ToString();
             factorTextBox.Text = factor.ToString();
             isWeightedCheckBox.Checked = isWeighted;
@@ -103,8 +96,6 @@ namespace COVID
                 cRange = new ParameterRange(cMinTextBox, cMaxTextBox);
                 pRange = new ParameterRange(pMinTextBox, pMaxTextBox);
                 
-                skip = Convert.ToInt32(skipTextBox.Text);
-                windowSize = Convert.ToInt32(windowTextBox.Text);
                 step = Convert.ToDouble(stepTextBox.Text);
                 factor = Convert.ToDouble(factorTextBox.Text);
                 isWeighted = isWeightedCheckBox.Checked;
@@ -249,9 +240,9 @@ namespace COVID
                 modelDailySeries.Legend = legend.Name;
                 modelDailySeries.Color = Color.LightBlue;
                 modelDailySeries.YAxisType = AxisType.Secondary;
-                for (int i = windowSize; i < modelData.Length; i++)
+                for (int i = 1; i < modelData.Length; i++)
                 {
-                    var value = modelData[i] - modelData[i - windowSize];
+                    var value = modelData[i] - modelData[i - 1];
                     var point = modelDailySeries.Points[modelDailySeries.Points.AddXY(i, value)];
                     point.AxisLabel = startDate.AddDays(i).ToShortDateString();
                     point.ToolTip = Math.Round(value).ToString();
@@ -263,9 +254,9 @@ namespace COVID
                 actualDailySeries.Legend = legend.Name;
                 actualDailySeries.Color = Color.PaleVioletRed;
                 actualDailySeries.YAxisType = AxisType.Secondary;
-                for (int i = windowSize; i < actualData.Length; i++)
+                for (int i = 1; i < actualData.Length; i++)
                 {
-                    var value = actualData[i] - actualData[i - windowSize];
+                    var value = actualData[i] - actualData[i - 1];
                     var point = actualDailySeries.Points[actualDailySeries.Points.AddXY(i, value)];
                     point.AxisLabel = startDate.AddDays(i).ToShortDateString();
                     point.ToolTip = Math.Round(value).ToString();
@@ -469,28 +460,27 @@ namespace COVID
         private double CalculateError(Model model, double[] results, List<double> valuesCache)
         {
             model.Calculate(results, valuesCache);
-            var diffs = new List<double>();
-            for (int i = actualData.Length - 1 - skip; i >= windowSize; i--)
+            double error = 0;
+
+            for (int i = 1; i < actualData.Length; i++)
             {
-                var value1 = results[i] - results[i - windowSize];
-                var value2 = actualData[i] - actualData[i - windowSize];
-                var avgValue = (value1 + value2) / 2.0;
+                var value1 = results[i] - results[i - 1];
+                var value2 = actualData[i] - actualData[i - 1];
+                var diff = value1 - value2;
 
-                if (avgValue != 0)
+                if (isWeighted)
                 {
-                    var diff = value1 - value2;
-
-                    if (isWeighted)
+                    var avg = (value1 + value2) / 2.0;
+                    if (avg != 0)
                     {
-                        diff /= avgValue;
+                        diff /= avg;
                     }
-
-                    diffs.Add(diff * diff);
                 }
+
+                error += diff * diff;
             }
 
-            diffs.Sort();
-            return diffs.Take(diffs.Count - skip).Sum();
+            return error;
         }
 
         private void stopButton_Click(object sender, EventArgs e)
