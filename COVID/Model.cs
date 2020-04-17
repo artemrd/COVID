@@ -7,7 +7,7 @@ namespace COVID
     {
         const double dt = 0.001;
 
-        public Model(double f0, double r, DateTime startDate, double orderDay, double c1, double c2, double p1, double p2)
+        public Model(double f0, double r, DateTime startDate, double orderDay, double c1, double c2, double p1, double p2, double returnDay)
         {
             this.F0 = f0;
             this.R = r;
@@ -17,6 +17,7 @@ namespace COVID
             this.C2 = c2;
             this.P1 = p1;
             this.P2 = p2;
+            this.ReturnDay = returnDay;
         }
 
         // Initial value
@@ -39,6 +40,8 @@ namespace COVID
         public double P1 { get; }
 
         public double P2 { get; }
+
+        public double ReturnDay { get; }
 
         public void Calculate(double[] results, List<double> valuesCache)
         {
@@ -94,7 +97,8 @@ namespace COVID
                 $"C2: {C2}{separator}" +
                 $"P1: {P1}{separator}" +
                 $"P2: {P2}{separator}" +
-                $"bestModel = new Model({F0}, {R}, startDate, {OrderDay}, {C1}, {C2}, {P1}, {P2});";
+                (ReturnDay > 0 ? $"OrderDate: {this.StartDate.AddDays(Math.Round(ReturnDay)).ToShortDateString()} ({ReturnDay}){separator}" : "") +
+                $"bestModel = new Model({F0}, {R}, startDate, {OrderDay}, {C1}, {C2}, {P1}, {P2}, {ReturnDay});";
         }
     }
 }
