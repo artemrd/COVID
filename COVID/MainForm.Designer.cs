@@ -70,6 +70,8 @@
             this.oneOnlyCheckBox = new System.Windows.Forms.CheckBox();
             this.twoOnlyCheckBox = new System.Windows.Forms.CheckBox();
             this.resetButton = new System.Windows.Forms.Button();
+            this.returnDateTextBox = new System.Windows.Forms.TextBox();
+            this.returnDateLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.chart)).BeginInit();
             this.SuspendLayout();
             // 
@@ -88,7 +90,7 @@
             // 
             // startButton
             // 
-            this.startButton.Location = new System.Drawing.Point(2024, 483);
+            this.startButton.Location = new System.Drawing.Point(2024, 587);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(75, 36);
             this.startButton.TabIndex = 25;
@@ -108,7 +110,7 @@
             // 
             // stopButton
             // 
-            this.stopButton.Location = new System.Drawing.Point(2024, 525);
+            this.stopButton.Location = new System.Drawing.Point(2024, 629);
             this.stopButton.Name = "stopButton";
             this.stopButton.Size = new System.Drawing.Size(75, 36);
             this.stopButton.TabIndex = 26;
@@ -398,7 +400,7 @@
             // 
             // resetButton
             // 
-            this.resetButton.Location = new System.Drawing.Point(2024, 567);
+            this.resetButton.Location = new System.Drawing.Point(2024, 671);
             this.resetButton.Name = "resetButton";
             this.resetButton.Size = new System.Drawing.Size(75, 36);
             this.resetButton.TabIndex = 27;
@@ -406,11 +408,29 @@
             this.resetButton.UseVisualStyleBackColor = true;
             this.resetButton.Click += new System.EventHandler(this.resetButton_Click);
             // 
+            // returnDateTextBox
+            // 
+            this.returnDateTextBox.Location = new System.Drawing.Point(1893, 498);
+            this.returnDateTextBox.Name = "returnDateTextBox";
+            this.returnDateTextBox.Size = new System.Drawing.Size(100, 26);
+            this.returnDateTextBox.TabIndex = 100;
+            // 
+            // returnDateLabel
+            // 
+            this.returnDateLabel.AutoSize = true;
+            this.returnDateLabel.Location = new System.Drawing.Point(1793, 501);
+            this.returnDateLabel.Name = "returnDateLabel";
+            this.returnDateLabel.Size = new System.Drawing.Size(94, 20);
+            this.returnDateLabel.TabIndex = 101;
+            this.returnDateLabel.Text = "Return date";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2111, 1298);
+            this.Controls.Add(this.returnDateLabel);
+            this.Controls.Add(this.returnDateTextBox);
             this.Controls.Add(this.resetButton);
             this.Controls.Add(this.twoOnlyCheckBox);
             this.Controls.Add(this.oneOnlyCheckBox);
@@ -504,6 +524,8 @@
         private System.Windows.Forms.CheckBox oneOnlyCheckBox;
         private System.Windows.Forms.CheckBox twoOnlyCheckBox;
         private System.Windows.Forms.Button resetButton;
+        private System.Windows.Forms.TextBox returnDateTextBox;
+        private System.Windows.Forms.Label returnDateLabel;
     }
 }
 

@@ -131,6 +131,22 @@ namespace COVID
                 dC2 = c2Range.Diff / c2Range.Steps * stepFactor;
                 dP1 = p1Range.Diff / p1Range.Steps * stepFactor;
                 dP2 = p2Range.Diff / p2Range.Steps * stepFactor;
+
+                DateTime returnDate;
+                if (DateTime.TryParse(returnDateTextBox.Text, out returnDate))
+                {
+                    returnDay = (returnDate - startDate).TotalDays;
+                }
+                else
+                {
+                    returnDay = -1;
+                }
+
+                if (bestModel != null)
+                {
+                    bestModel = new Model(bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P1, bestModel.P2, returnDay);
+                    DisplayBestModelData();
+                }
             }
             catch (Exception ex)
             {
@@ -187,7 +203,8 @@ namespace COVID
             }
 
             // Extrapolate 2 months.
-            var modelData = new double[actualData.Length + 90];
+            int days = returnDay > 0 ? (int)returnDay + 240 : actualData.Length + 90;
+            var modelData = new double[days];
             var valuesCache = new List<double>();
             var model = bestModel;
 
@@ -282,6 +299,10 @@ namespace COVID
                     var point = modelDailySeries.Points[modelDailySeries.Points.AddXY(i, value)];
                     point.AxisLabel = startDate.AddDays(i).ToShortDateString();
                     point.ToolTip = Math.Round(value).ToString();
+                    if (i == turningPoint)
+                    {
+                        point.Label = point.ToolTip;
+                    }
                 }
             }
 

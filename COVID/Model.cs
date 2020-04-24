@@ -69,7 +69,7 @@ namespace COVID
 
                 int t_r = i - rShift;
                 double t_rValue = t_r < 0 ? 0 : valuesCache[t_r];
-                if (t < OrderDay)
+                if (t < OrderDay || (ReturnDay > 0 && t > ReturnDay))
                 {
                     value = value + C1 * (value - t_rValue) * (P1 - value) * dt;
                 }
