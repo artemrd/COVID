@@ -77,15 +77,15 @@ namespace COVID
             var orderDay = (orderDate - startDate).TotalDays;
 
             f0Range = new ParameterRange(0.01, 1, 10000);
-            rRange = new ParameterRange(5, 60, 100000);
-            orderDayRange = new ParameterRange(orderDay, orderDay + 10, 10000);
+            rRange = new ParameterRange(3, 60, 100000);
+            orderDayRange = new ParameterRange(orderDay, orderDay + 20, 10000);
             c1Range = new ParameterRange(1E-6, 2E-5, 1000000);
-            c2Range = new ParameterRange(1E-6, 2E-5, 100000);
+            c2Range = new ParameterRange(1E-6, 2E-5, 1000000);
             p1Range = new ParameterRange(15000, 200000, 1000000);
-            p2Range = new ParameterRange(15000, 200000, 100000);
+            p2Range = new ParameterRange(15000, 200000, 1000000);
 
             stepFactor = 100;
-            filterFactor = 1.5;
+            filterFactor = 1.2;
             oneOnly = false;
             twoOnly = false;
 
@@ -178,9 +178,16 @@ namespace COVID
         private void DisplayBestModelData()
         {
             consoleTextBox.Clear();
+            chart.Series.Clear();
+            chart.Legends.Clear();
+
+            if (bestModel == null)
+            {
+                return;
+            }
 
             // Extrapolate 2 months.
-            var modelData = new double[actualData.Length + 60];
+            var modelData = new double[actualData.Length + 90];
             var valuesCache = new List<double>();
             var model = bestModel;
 
@@ -259,9 +266,6 @@ namespace COVID
             ConsoleWriteLine($"F1: {Math.Round(noOrderModelData[noOrderModelData.Length - 1])}");
             ConsoleWriteLine($"F2: {Math.Round(modelData[modelData.Length - 1])}");
             ConsoleWriteLine();
-
-            chart.Series.Clear();
-            chart.Legends.Clear();
 
             var legend = chart.Legends.Add("Legend");
             legend.Docking = Docking.Bottom;
@@ -533,29 +537,41 @@ namespace COVID
                 ConsoleWriteLine($"C2-: {error - minusError}");
             }
 
+            if (bestModel.P1 == bestModel.P2)
             {
-                var plusModel = CreateModel(bestModel, bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P1 + dP1, bestModel.P2, bestModel.ReturnDay);
-                var minusModel = CreateModel(bestModel, bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P1 - dP1, bestModel.P2, bestModel.ReturnDay);
+                var plusModel = CreateModel(bestModel, bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P1 + dP1, bestModel.P2 + dP1, bestModel.ReturnDay);
+                var minusModel = CreateModel(bestModel, bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P1 - dP1, bestModel.P2 - dP1, bestModel.ReturnDay);
                 var plusError = CalculateError(plusModel, results, valuesCache);
                 var minusError = CalculateError(minusModel, results, valuesCache);
-                ConsoleWriteLine($"P1+: {plusError - error}");
-                ConsoleWriteLine($"P1-: {error - minusError}");
+                ConsoleWriteLine($"P+: {plusError - error}");
+                ConsoleWriteLine($"P-: {error - minusError}");
             }
-
+            else
             {
-                var plusModel = CreateModel(bestModel, bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P1, bestModel.P2 + dP2, bestModel.ReturnDay);
-                var minusModel = CreateModel(bestModel, bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P1, bestModel.P2 - dP2, bestModel.ReturnDay);
-                var plusError = CalculateError(plusModel, results, valuesCache);
-                var minusError = CalculateError(minusModel, results, valuesCache);
-                ConsoleWriteLine($"P2+: {plusError - error}");
-                ConsoleWriteLine($"P2-: {error - minusError}");
+                {
+                    var plusModel = CreateModel(bestModel, bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P1 + dP1, bestModel.P2, bestModel.ReturnDay);
+                    var minusModel = CreateModel(bestModel, bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P1 - dP1, bestModel.P2, bestModel.ReturnDay);
+                    var plusError = CalculateError(plusModel, results, valuesCache);
+                    var minusError = CalculateError(minusModel, results, valuesCache);
+                    ConsoleWriteLine($"P1+: {plusError - error}");
+                    ConsoleWriteLine($"P1-: {error - minusError}");
+                }
+
+                {
+                    var plusModel = CreateModel(bestModel, bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P1, bestModel.P2 + dP2, bestModel.ReturnDay);
+                    var minusModel = CreateModel(bestModel, bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P1, bestModel.P2 - dP2, bestModel.ReturnDay);
+                    var plusError = CalculateError(plusModel, results, valuesCache);
+                    var minusError = CalculateError(minusModel, results, valuesCache);
+                    ConsoleWriteLine($"P2+: {plusError - error}");
+                    ConsoleWriteLine($"P2-: {error - minusError}");
+                }
             }
         }
 
         private IEnumerable<Model> GetRandomModels()
         {
             // Pure random.
-            yield return CreateModel(
+            var model = CreateModel(
                 bestModel,
                 f0Range.GetRandom(rnd),
                 rRange.GetRandom(rnd),
@@ -566,34 +582,78 @@ namespace COVID
                 p1Range.GetRandom(rnd),
                 p2Range.GetRandom(rnd),
                 returnDay);
+            yield return model;
+
+            // Try p1 = p2.
+            var p = p1Range.GetRandom(rnd);
+            yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, p, p, model.ReturnDay);
 
             // Randomized best.
             if (bestModel != null)
             {
                 var randomization = rnd.NextDouble();
-                yield return CreateModel(
-                    bestModel,
-                    rnd.NextDouble() > randomization ? bestModel.F0 : f0Range.GetRandom(rnd),
-                    rnd.NextDouble() > randomization ? bestModel.R : rRange.GetRandom(rnd),
-                    startDate,
-                    rnd.NextDouble() > randomization ? bestModel.OrderDay : orderDayRange.GetRandom(rnd),
-                    rnd.NextDouble() > randomization ? bestModel.C1 : c1Range.GetRandom(rnd),
-                    rnd.NextDouble() > randomization ? bestModel.C2 : c2Range.GetRandom(rnd),
-                    rnd.NextDouble() > randomization ? bestModel.P1 : p1Range.GetRandom(rnd),
-                    rnd.NextDouble() > randomization ? bestModel.P2 : p2Range.GetRandom(rnd),
-                    returnDay);
+                if (bestModel.P1 == bestModel.P2)
+                {
+                    p = rnd.NextDouble() > randomization ? bestModel.P1 : p1Range.GetRandom(rnd);
+                    yield return CreateModel(
+                        bestModel,
+                        rnd.NextDouble() > randomization ? bestModel.F0 : f0Range.GetRandom(rnd),
+                        rnd.NextDouble() > randomization ? bestModel.R : rRange.GetRandom(rnd),
+                        startDate,
+                        rnd.NextDouble() > randomization ? bestModel.OrderDay : orderDayRange.GetRandom(rnd),
+                        rnd.NextDouble() > randomization ? bestModel.C1 : c1Range.GetRandom(rnd),
+                        rnd.NextDouble() > randomization ? bestModel.C2 : c2Range.GetRandom(rnd),
+                        p,
+                        p,
+                        returnDay);
 
-                yield return CreateModel(
-                    bestModel,
-                    bestModel.F0 + dF0 * (1.0 - rnd.NextDouble() * 2),
-                    bestModel.R + dR * (1.0 - rnd.NextDouble() * 2),
-                    startDate,
-                    bestModel.OrderDay + dO * (1.0 - rnd.NextDouble() * 2),
-                    bestModel.C1 + dC1 * (1.0 - rnd.NextDouble() * 2),
-                    bestModel.C2 + dC2 * (1.0 - rnd.NextDouble() * 2),
-                    bestModel.P1 + dP1 * (1.0 - rnd.NextDouble() * 2),
-                    bestModel.P2 + dP2 * (1.0 - rnd.NextDouble() * 2),
-                    returnDay);
+                    p = bestModel.P1 + dP1 * (1.0 - rnd.NextDouble() * 2);
+                    yield return CreateModel(
+                        bestModel,
+                        bestModel.F0 + dF0 * (1.0 - rnd.NextDouble() * 2),
+                        bestModel.R + dR * (1.0 - rnd.NextDouble() * 2),
+                        startDate,
+                        bestModel.OrderDay + dO * (1.0 - rnd.NextDouble() * 2),
+                        bestModel.C1 + dC1 * (1.0 - rnd.NextDouble() * 2),
+                        bestModel.C2 + dC2 * (1.0 - rnd.NextDouble() * 2),
+                        p,
+                        p,
+                        returnDay);
+                }
+                else
+                {
+                    model = CreateModel(
+                        bestModel,
+                        rnd.NextDouble() > randomization ? bestModel.F0 : f0Range.GetRandom(rnd),
+                        rnd.NextDouble() > randomization ? bestModel.R : rRange.GetRandom(rnd),
+                        startDate,
+                        rnd.NextDouble() > randomization ? bestModel.OrderDay : orderDayRange.GetRandom(rnd),
+                        rnd.NextDouble() > randomization ? bestModel.C1 : c1Range.GetRandom(rnd),
+                        rnd.NextDouble() > randomization ? bestModel.C2 : c2Range.GetRandom(rnd),
+                        rnd.NextDouble() > randomization ? bestModel.P1 : p1Range.GetRandom(rnd),
+                        rnd.NextDouble() > randomization ? bestModel.P2 : p2Range.GetRandom(rnd),
+                        returnDay);
+                    yield return model;
+
+                    // Try p1 = p2.
+                    yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P1, model.ReturnDay);
+
+                    model = CreateModel(
+                        bestModel,
+                        bestModel.F0 + dF0 * (1.0 - rnd.NextDouble() * 2),
+                        bestModel.R + dR * (1.0 - rnd.NextDouble() * 2),
+                        startDate,
+                        bestModel.OrderDay + dO * (1.0 - rnd.NextDouble() * 2),
+                        bestModel.C1 + dC1 * (1.0 - rnd.NextDouble() * 2),
+                        bestModel.C2 + dC2 * (1.0 - rnd.NextDouble() * 2),
+                        bestModel.P1 + dP1 * (1.0 - rnd.NextDouble() * 2),
+                        bestModel.P2 + dP2 * (1.0 - rnd.NextDouble() * 2),
+                        returnDay);
+                    yield return model;
+
+                    // Try p1 = p2.
+                    yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P1, model.ReturnDay);
+                }
             }
         }
 
@@ -614,23 +674,44 @@ namespace COVID
             yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2 + dC2, model.P1, model.P2, model.ReturnDay);
             yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2 - dC2, model.P1, model.P2, model.ReturnDay);
 
-            yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 + dP1, model.P2, model.ReturnDay);
-            yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 - dP1, model.P2, model.ReturnDay);
+            if (model.P1 == model.P2)
+            {
+                yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 + dP1, model.P2 + dP1, model.ReturnDay);
+                yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 - dP1, model.P2 - dP1, model.ReturnDay);
 
-            yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2 + dP2, model.ReturnDay);
-            yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2 - dP2, model.ReturnDay);
+                var p = model.P1 + dP1 * (1.0 - rnd.NextDouble() * 2);
+                yield return CreateModel(
+                    model,
+                    model.F0 + dF0 * (1.0 - rnd.NextDouble() * 2),
+                    model.R + dR * (1.0 - rnd.NextDouble() * 2),
+                    startDate,
+                    model.OrderDay + dO * (1.0 - rnd.NextDouble() * 2),
+                    model.C1 + dC1 * (1.0 - rnd.NextDouble() * 2),
+                    model.C2 + dC2 * (1.0 - rnd.NextDouble() * 2),
+                    p,
+                    p,
+                    returnDay);
+            }
+            else
+            {
+                yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 + dP1, model.P2, model.ReturnDay);
+                yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 - dP1, model.P2, model.ReturnDay);
 
-            yield return CreateModel(
-                model,
-                model.F0 + dF0 * (1.0 - rnd.NextDouble() * 2),
-                model.R + dR * (1.0 - rnd.NextDouble() * 2),
-                startDate,
-                model.OrderDay + dO * (1.0 - rnd.NextDouble() * 2),
-                model.C1 + dC1 * (1.0 - rnd.NextDouble() * 2),
-                model.C2 + dC2 * (1.0 - rnd.NextDouble() * 2),
-                model.P1 + dP1 * (1.0 - rnd.NextDouble() * 2),
-                model.P2 + dP2 * (1.0 - rnd.NextDouble() * 2),
-                returnDay);
+                yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2 + dP2, model.ReturnDay);
+                yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2 - dP2, model.ReturnDay);
+
+                yield return CreateModel(
+                    model,
+                    model.F0 + dF0 * (1.0 - rnd.NextDouble() * 2),
+                    model.R + dR * (1.0 - rnd.NextDouble() * 2),
+                    startDate,
+                    model.OrderDay + dO * (1.0 - rnd.NextDouble() * 2),
+                    model.C1 + dC1 * (1.0 - rnd.NextDouble() * 2),
+                    model.C2 + dC2 * (1.0 - rnd.NextDouble() * 2),
+                    model.P1 + dP1 * (1.0 - rnd.NextDouble() * 2),
+                    model.P2 + dP2 * (1.0 - rnd.NextDouble() * 2),
+                    returnDay);
+            }
         }
 
         private double CalculateError(Model model, double[] results, List<double> valuesCache)
@@ -666,6 +747,13 @@ namespace COVID
             this.stop = stop;
             startButton.Enabled = this.stop;
             stopButton.Enabled = !this.stop;
+            resetButton.Enabled = this.stop;
+        }
+
+        private void resetButton_Click(object sender, EventArgs e)
+        {
+            bestModel = null;
+            DisplayBestModelData();
         }
     }
 }

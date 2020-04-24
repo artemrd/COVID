@@ -69,6 +69,7 @@
             this.p2Label = new System.Windows.Forms.Label();
             this.oneOnlyCheckBox = new System.Windows.Forms.CheckBox();
             this.twoOnlyCheckBox = new System.Windows.Forms.CheckBox();
+            this.resetButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.chart)).BeginInit();
             this.SuspendLayout();
             // 
@@ -81,7 +82,8 @@
             this.chart.Location = new System.Drawing.Point(12, 12);
             this.chart.Name = "chart";
             this.chart.Size = new System.Drawing.Size(1724, 682);
-            this.chart.TabIndex = 0;
+            this.chart.TabIndex = 99;
+            this.chart.TabStop = false;
             this.chart.Text = "Chart";
             // 
             // startButton
@@ -89,7 +91,7 @@
             this.startButton.Location = new System.Drawing.Point(2024, 483);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(75, 36);
-            this.startButton.TabIndex = 1;
+            this.startButton.TabIndex = 25;
             this.startButton.Text = "Start";
             this.startButton.UseVisualStyleBackColor = true;
             this.startButton.Click += new System.EventHandler(this.startButton_Click);
@@ -102,14 +104,14 @@
             this.consoleTextBox.ReadOnly = true;
             this.consoleTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.consoleTextBox.Size = new System.Drawing.Size(1724, 586);
-            this.consoleTextBox.TabIndex = 2;
+            this.consoleTextBox.TabIndex = 99;
             // 
             // stopButton
             // 
             this.stopButton.Location = new System.Drawing.Point(2024, 525);
             this.stopButton.Name = "stopButton";
             this.stopButton.Size = new System.Drawing.Size(75, 36);
-            this.stopButton.TabIndex = 3;
+            this.stopButton.TabIndex = 26;
             this.stopButton.Text = "Stop";
             this.stopButton.UseVisualStyleBackColor = true;
             this.stopButton.Click += new System.EventHandler(this.stopButton_Click);
@@ -164,77 +166,77 @@
             this.f0MinTextBox.Location = new System.Drawing.Point(1787, 35);
             this.f0MinTextBox.Name = "f0MinTextBox";
             this.f0MinTextBox.Size = new System.Drawing.Size(100, 26);
-            this.f0MinTextBox.TabIndex = 9;
+            this.f0MinTextBox.TabIndex = 0;
             // 
             // f0MaxTextBox
             // 
             this.f0MaxTextBox.Location = new System.Drawing.Point(1893, 35);
             this.f0MaxTextBox.Name = "f0MaxTextBox";
             this.f0MaxTextBox.Size = new System.Drawing.Size(100, 26);
-            this.f0MaxTextBox.TabIndex = 10;
+            this.f0MaxTextBox.TabIndex = 1;
             // 
             // rMaxTextBox
             // 
             this.rMaxTextBox.Location = new System.Drawing.Point(1893, 67);
             this.rMaxTextBox.Name = "rMaxTextBox";
             this.rMaxTextBox.Size = new System.Drawing.Size(100, 26);
-            this.rMaxTextBox.TabIndex = 13;
+            this.rMaxTextBox.TabIndex = 4;
             // 
             // rMinTextBox
             // 
             this.rMinTextBox.Location = new System.Drawing.Point(1787, 67);
             this.rMinTextBox.Name = "rMinTextBox";
             this.rMinTextBox.Size = new System.Drawing.Size(100, 26);
-            this.rMinTextBox.TabIndex = 12;
+            this.rMinTextBox.TabIndex = 3;
             // 
             // oMaxTextBox
             // 
             this.oMaxTextBox.Location = new System.Drawing.Point(1893, 99);
             this.oMaxTextBox.Name = "oMaxTextBox";
             this.oMaxTextBox.Size = new System.Drawing.Size(100, 26);
-            this.oMaxTextBox.TabIndex = 16;
+            this.oMaxTextBox.TabIndex = 7;
             // 
             // oMinTextBox
             // 
             this.oMinTextBox.Location = new System.Drawing.Point(1787, 99);
             this.oMinTextBox.Name = "oMinTextBox";
             this.oMinTextBox.Size = new System.Drawing.Size(100, 26);
-            this.oMinTextBox.TabIndex = 15;
+            this.oMinTextBox.TabIndex = 6;
             // 
             // c1MaxTextBox
             // 
             this.c1MaxTextBox.Location = new System.Drawing.Point(1893, 131);
             this.c1MaxTextBox.Name = "c1MaxTextBox";
             this.c1MaxTextBox.Size = new System.Drawing.Size(100, 26);
-            this.c1MaxTextBox.TabIndex = 19;
+            this.c1MaxTextBox.TabIndex = 10;
             // 
             // c1MinTextBox
             // 
             this.c1MinTextBox.Location = new System.Drawing.Point(1787, 131);
             this.c1MinTextBox.Name = "c1MinTextBox";
             this.c1MinTextBox.Size = new System.Drawing.Size(100, 26);
-            this.c1MinTextBox.TabIndex = 18;
+            this.c1MinTextBox.TabIndex = 9;
             // 
             // p1MaxTextBox
             // 
             this.p1MaxTextBox.Location = new System.Drawing.Point(1893, 195);
             this.p1MaxTextBox.Name = "p1MaxTextBox";
             this.p1MaxTextBox.Size = new System.Drawing.Size(100, 26);
-            this.p1MaxTextBox.TabIndex = 22;
+            this.p1MaxTextBox.TabIndex = 16;
             // 
             // p1MinTextBox
             // 
             this.p1MinTextBox.Location = new System.Drawing.Point(1787, 195);
             this.p1MinTextBox.Name = "p1MinTextBox";
             this.p1MinTextBox.Size = new System.Drawing.Size(100, 26);
-            this.p1MinTextBox.TabIndex = 21;
+            this.p1MinTextBox.TabIndex = 15;
             // 
             // stepFactorTextBox
             // 
             this.stepFactorTextBox.Location = new System.Drawing.Point(1893, 329);
             this.stepFactorTextBox.Name = "stepFactorTextBox";
             this.stepFactorTextBox.Size = new System.Drawing.Size(100, 26);
-            this.stepFactorTextBox.TabIndex = 29;
+            this.stepFactorTextBox.TabIndex = 21;
             // 
             // stepFactorLabel
             // 
@@ -250,7 +252,7 @@
             this.filterFactorTextBox.Location = new System.Drawing.Point(1893, 361);
             this.filterFactorTextBox.Name = "filterFactorTextBox";
             this.filterFactorTextBox.Size = new System.Drawing.Size(100, 26);
-            this.filterFactorTextBox.TabIndex = 31;
+            this.filterFactorTextBox.TabIndex = 22;
             // 
             // filterFactorLabel
             // 
@@ -284,56 +286,56 @@
             this.f0StepsTextBox.Location = new System.Drawing.Point(1999, 35);
             this.f0StepsTextBox.Name = "f0StepsTextBox";
             this.f0StepsTextBox.Size = new System.Drawing.Size(100, 26);
-            this.f0StepsTextBox.TabIndex = 35;
+            this.f0StepsTextBox.TabIndex = 2;
             // 
             // rStepsTextBox
             // 
             this.rStepsTextBox.Location = new System.Drawing.Point(1999, 67);
             this.rStepsTextBox.Name = "rStepsTextBox";
             this.rStepsTextBox.Size = new System.Drawing.Size(100, 26);
-            this.rStepsTextBox.TabIndex = 36;
+            this.rStepsTextBox.TabIndex = 5;
             // 
             // oStepsTextBox
             // 
             this.oStepsTextBox.Location = new System.Drawing.Point(1999, 99);
             this.oStepsTextBox.Name = "oStepsTextBox";
             this.oStepsTextBox.Size = new System.Drawing.Size(100, 26);
-            this.oStepsTextBox.TabIndex = 37;
+            this.oStepsTextBox.TabIndex = 8;
             // 
             // c1StepsTextBox
             // 
             this.c1StepsTextBox.Location = new System.Drawing.Point(1999, 131);
             this.c1StepsTextBox.Name = "c1StepsTextBox";
             this.c1StepsTextBox.Size = new System.Drawing.Size(100, 26);
-            this.c1StepsTextBox.TabIndex = 38;
+            this.c1StepsTextBox.TabIndex = 11;
             // 
             // p1StepsTextBox
             // 
             this.p1StepsTextBox.Location = new System.Drawing.Point(1999, 195);
             this.p1StepsTextBox.Name = "p1StepsTextBox";
             this.p1StepsTextBox.Size = new System.Drawing.Size(100, 26);
-            this.p1StepsTextBox.TabIndex = 39;
+            this.p1StepsTextBox.TabIndex = 17;
             // 
             // c2StepsTextBox
             // 
             this.c2StepsTextBox.Location = new System.Drawing.Point(1999, 163);
             this.c2StepsTextBox.Name = "c2StepsTextBox";
             this.c2StepsTextBox.Size = new System.Drawing.Size(100, 26);
-            this.c2StepsTextBox.TabIndex = 43;
+            this.c2StepsTextBox.TabIndex = 14;
             // 
             // c2MaxTextBox
             // 
             this.c2MaxTextBox.Location = new System.Drawing.Point(1893, 163);
             this.c2MaxTextBox.Name = "c2MaxTextBox";
             this.c2MaxTextBox.Size = new System.Drawing.Size(100, 26);
-            this.c2MaxTextBox.TabIndex = 42;
+            this.c2MaxTextBox.TabIndex = 13;
             // 
             // c2MinTextBox
             // 
             this.c2MinTextBox.Location = new System.Drawing.Point(1787, 163);
             this.c2MinTextBox.Name = "c2MinTextBox";
             this.c2MinTextBox.Size = new System.Drawing.Size(100, 26);
-            this.c2MinTextBox.TabIndex = 41;
+            this.c2MinTextBox.TabIndex = 12;
             // 
             // c2Label
             // 
@@ -349,21 +351,21 @@
             this.p2StepsTextBox.Location = new System.Drawing.Point(1999, 227);
             this.p2StepsTextBox.Name = "p2StepsTextBox";
             this.p2StepsTextBox.Size = new System.Drawing.Size(100, 26);
-            this.p2StepsTextBox.TabIndex = 47;
+            this.p2StepsTextBox.TabIndex = 20;
             // 
             // p2MaxTextBox
             // 
             this.p2MaxTextBox.Location = new System.Drawing.Point(1893, 227);
             this.p2MaxTextBox.Name = "p2MaxTextBox";
             this.p2MaxTextBox.Size = new System.Drawing.Size(100, 26);
-            this.p2MaxTextBox.TabIndex = 46;
+            this.p2MaxTextBox.TabIndex = 19;
             // 
             // p2MinTextBox
             // 
             this.p2MinTextBox.Location = new System.Drawing.Point(1787, 227);
             this.p2MinTextBox.Name = "p2MinTextBox";
             this.p2MinTextBox.Size = new System.Drawing.Size(100, 26);
-            this.p2MinTextBox.TabIndex = 45;
+            this.p2MinTextBox.TabIndex = 18;
             // 
             // p2Label
             // 
@@ -380,7 +382,7 @@
             this.oneOnlyCheckBox.Location = new System.Drawing.Point(1893, 394);
             this.oneOnlyCheckBox.Name = "oneOnlyCheckBox";
             this.oneOnlyCheckBox.Size = new System.Drawing.Size(76, 24);
-            this.oneOnlyCheckBox.TabIndex = 48;
+            this.oneOnlyCheckBox.TabIndex = 23;
             this.oneOnlyCheckBox.Text = "1 only";
             this.oneOnlyCheckBox.UseVisualStyleBackColor = true;
             // 
@@ -390,15 +392,26 @@
             this.twoOnlyCheckBox.Location = new System.Drawing.Point(1893, 425);
             this.twoOnlyCheckBox.Name = "twoOnlyCheckBox";
             this.twoOnlyCheckBox.Size = new System.Drawing.Size(76, 24);
-            this.twoOnlyCheckBox.TabIndex = 49;
+            this.twoOnlyCheckBox.TabIndex = 24;
             this.twoOnlyCheckBox.Text = "2 only";
             this.twoOnlyCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // resetButton
+            // 
+            this.resetButton.Location = new System.Drawing.Point(2024, 567);
+            this.resetButton.Name = "resetButton";
+            this.resetButton.Size = new System.Drawing.Size(75, 36);
+            this.resetButton.TabIndex = 27;
+            this.resetButton.Text = "Reset";
+            this.resetButton.UseVisualStyleBackColor = true;
+            this.resetButton.Click += new System.EventHandler(this.resetButton_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2111, 1298);
+            this.Controls.Add(this.resetButton);
             this.Controls.Add(this.twoOnlyCheckBox);
             this.Controls.Add(this.oneOnlyCheckBox);
             this.Controls.Add(this.p2StepsTextBox);
@@ -490,6 +503,7 @@
         private System.Windows.Forms.Label p2Label;
         private System.Windows.Forms.CheckBox oneOnlyCheckBox;
         private System.Windows.Forms.CheckBox twoOnlyCheckBox;
+        private System.Windows.Forms.Button resetButton;
     }
 }
 
