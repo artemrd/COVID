@@ -37,7 +37,7 @@
             this.rLabel = new System.Windows.Forms.Label();
             this.oLabel = new System.Windows.Forms.Label();
             this.c1Label = new System.Windows.Forms.Label();
-            this.p1Label = new System.Windows.Forms.Label();
+            this.pLabel = new System.Windows.Forms.Label();
             this.f0MinTextBox = new System.Windows.Forms.TextBox();
             this.f0MaxTextBox = new System.Windows.Forms.TextBox();
             this.rMaxTextBox = new System.Windows.Forms.TextBox();
@@ -46,8 +46,8 @@
             this.oMinTextBox = new System.Windows.Forms.TextBox();
             this.c1MaxTextBox = new System.Windows.Forms.TextBox();
             this.c1MinTextBox = new System.Windows.Forms.TextBox();
-            this.p1MaxTextBox = new System.Windows.Forms.TextBox();
-            this.p1MinTextBox = new System.Windows.Forms.TextBox();
+            this.pMaxTextBox = new System.Windows.Forms.TextBox();
+            this.pMinTextBox = new System.Windows.Forms.TextBox();
             this.stepFactorTextBox = new System.Windows.Forms.TextBox();
             this.stepFactorLabel = new System.Windows.Forms.Label();
             this.filterFactorTextBox = new System.Windows.Forms.TextBox();
@@ -58,20 +58,20 @@
             this.rStepsTextBox = new System.Windows.Forms.TextBox();
             this.oStepsTextBox = new System.Windows.Forms.TextBox();
             this.c1StepsTextBox = new System.Windows.Forms.TextBox();
-            this.p1StepsTextBox = new System.Windows.Forms.TextBox();
+            this.pStepsTextBox = new System.Windows.Forms.TextBox();
             this.c2StepsTextBox = new System.Windows.Forms.TextBox();
             this.c2MaxTextBox = new System.Windows.Forms.TextBox();
             this.c2MinTextBox = new System.Windows.Forms.TextBox();
             this.c2Label = new System.Windows.Forms.Label();
-            this.p2StepsTextBox = new System.Windows.Forms.TextBox();
-            this.p2MaxTextBox = new System.Windows.Forms.TextBox();
-            this.p2MinTextBox = new System.Windows.Forms.TextBox();
-            this.p2Label = new System.Windows.Forms.Label();
-            this.oneOnlyCheckBox = new System.Windows.Forms.CheckBox();
-            this.twoOnlyCheckBox = new System.Windows.Forms.CheckBox();
             this.resetButton = new System.Windows.Forms.Button();
             this.returnDateTextBox = new System.Windows.Forms.TextBox();
             this.returnDateLabel = new System.Windows.Forms.Label();
+            this.iMinTextBox = new System.Windows.Forms.TextBox();
+            this.iMaxTextBox = new System.Windows.Forms.TextBox();
+            this.iStepsTextBox = new System.Windows.Forms.TextBox();
+            this.iLabel = new System.Windows.Forms.Label();
+            this.windowTextBox = new System.Windows.Forms.TextBox();
+            this.windowLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.chart)).BeginInit();
             this.SuspendLayout();
             // 
@@ -90,7 +90,7 @@
             // 
             // startButton
             // 
-            this.startButton.Location = new System.Drawing.Point(2024, 587);
+            this.startButton.Location = new System.Drawing.Point(2024, 590);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(75, 36);
             this.startButton.TabIndex = 25;
@@ -110,7 +110,7 @@
             // 
             // stopButton
             // 
-            this.stopButton.Location = new System.Drawing.Point(2024, 629);
+            this.stopButton.Location = new System.Drawing.Point(2024, 632);
             this.stopButton.Name = "stopButton";
             this.stopButton.Size = new System.Drawing.Size(75, 36);
             this.stopButton.TabIndex = 26;
@@ -130,7 +130,7 @@
             // rLabel
             // 
             this.rLabel.AutoSize = true;
-            this.rLabel.Location = new System.Drawing.Point(1760, 70);
+            this.rLabel.Location = new System.Drawing.Point(1760, 102);
             this.rLabel.Name = "rLabel";
             this.rLabel.Size = new System.Drawing.Size(21, 20);
             this.rLabel.TabIndex = 5;
@@ -139,7 +139,7 @@
             // oLabel
             // 
             this.oLabel.AutoSize = true;
-            this.oLabel.Location = new System.Drawing.Point(1760, 102);
+            this.oLabel.Location = new System.Drawing.Point(1760, 134);
             this.oLabel.Name = "oLabel";
             this.oLabel.Size = new System.Drawing.Size(21, 20);
             this.oLabel.TabIndex = 6;
@@ -148,20 +148,20 @@
             // c1Label
             // 
             this.c1Label.AutoSize = true;
-            this.c1Label.Location = new System.Drawing.Point(1752, 134);
+            this.c1Label.Location = new System.Drawing.Point(1752, 166);
             this.c1Label.Name = "c1Label";
             this.c1Label.Size = new System.Drawing.Size(29, 20);
             this.c1Label.TabIndex = 7;
             this.c1Label.Text = "C1";
             // 
-            // p1Label
+            // pLabel
             // 
-            this.p1Label.AutoSize = true;
-            this.p1Label.Location = new System.Drawing.Point(1753, 198);
-            this.p1Label.Name = "p1Label";
-            this.p1Label.Size = new System.Drawing.Size(28, 20);
-            this.p1Label.TabIndex = 8;
-            this.p1Label.Text = "P1";
+            this.pLabel.AutoSize = true;
+            this.pLabel.Location = new System.Drawing.Point(1762, 233);
+            this.pLabel.Name = "pLabel";
+            this.pLabel.Size = new System.Drawing.Size(19, 20);
+            this.pLabel.TabIndex = 8;
+            this.pLabel.Text = "P";
             // 
             // f0MinTextBox
             // 
@@ -179,63 +179,63 @@
             // 
             // rMaxTextBox
             // 
-            this.rMaxTextBox.Location = new System.Drawing.Point(1893, 67);
+            this.rMaxTextBox.Location = new System.Drawing.Point(1893, 99);
             this.rMaxTextBox.Name = "rMaxTextBox";
             this.rMaxTextBox.Size = new System.Drawing.Size(100, 26);
             this.rMaxTextBox.TabIndex = 4;
             // 
             // rMinTextBox
             // 
-            this.rMinTextBox.Location = new System.Drawing.Point(1787, 67);
+            this.rMinTextBox.Location = new System.Drawing.Point(1787, 99);
             this.rMinTextBox.Name = "rMinTextBox";
             this.rMinTextBox.Size = new System.Drawing.Size(100, 26);
             this.rMinTextBox.TabIndex = 3;
             // 
             // oMaxTextBox
             // 
-            this.oMaxTextBox.Location = new System.Drawing.Point(1893, 99);
+            this.oMaxTextBox.Location = new System.Drawing.Point(1893, 131);
             this.oMaxTextBox.Name = "oMaxTextBox";
             this.oMaxTextBox.Size = new System.Drawing.Size(100, 26);
             this.oMaxTextBox.TabIndex = 7;
             // 
             // oMinTextBox
             // 
-            this.oMinTextBox.Location = new System.Drawing.Point(1787, 99);
+            this.oMinTextBox.Location = new System.Drawing.Point(1787, 131);
             this.oMinTextBox.Name = "oMinTextBox";
             this.oMinTextBox.Size = new System.Drawing.Size(100, 26);
             this.oMinTextBox.TabIndex = 6;
             // 
             // c1MaxTextBox
             // 
-            this.c1MaxTextBox.Location = new System.Drawing.Point(1893, 131);
+            this.c1MaxTextBox.Location = new System.Drawing.Point(1893, 163);
             this.c1MaxTextBox.Name = "c1MaxTextBox";
             this.c1MaxTextBox.Size = new System.Drawing.Size(100, 26);
             this.c1MaxTextBox.TabIndex = 10;
             // 
             // c1MinTextBox
             // 
-            this.c1MinTextBox.Location = new System.Drawing.Point(1787, 131);
+            this.c1MinTextBox.Location = new System.Drawing.Point(1787, 163);
             this.c1MinTextBox.Name = "c1MinTextBox";
             this.c1MinTextBox.Size = new System.Drawing.Size(100, 26);
             this.c1MinTextBox.TabIndex = 9;
             // 
-            // p1MaxTextBox
+            // pMaxTextBox
             // 
-            this.p1MaxTextBox.Location = new System.Drawing.Point(1893, 195);
-            this.p1MaxTextBox.Name = "p1MaxTextBox";
-            this.p1MaxTextBox.Size = new System.Drawing.Size(100, 26);
-            this.p1MaxTextBox.TabIndex = 16;
+            this.pMaxTextBox.Location = new System.Drawing.Point(1893, 227);
+            this.pMaxTextBox.Name = "pMaxTextBox";
+            this.pMaxTextBox.Size = new System.Drawing.Size(100, 26);
+            this.pMaxTextBox.TabIndex = 16;
             // 
-            // p1MinTextBox
+            // pMinTextBox
             // 
-            this.p1MinTextBox.Location = new System.Drawing.Point(1787, 195);
-            this.p1MinTextBox.Name = "p1MinTextBox";
-            this.p1MinTextBox.Size = new System.Drawing.Size(100, 26);
-            this.p1MinTextBox.TabIndex = 15;
+            this.pMinTextBox.Location = new System.Drawing.Point(1787, 227);
+            this.pMinTextBox.Name = "pMinTextBox";
+            this.pMinTextBox.Size = new System.Drawing.Size(100, 26);
+            this.pMinTextBox.TabIndex = 15;
             // 
             // stepFactorTextBox
             // 
-            this.stepFactorTextBox.Location = new System.Drawing.Point(1893, 329);
+            this.stepFactorTextBox.Location = new System.Drawing.Point(1893, 335);
             this.stepFactorTextBox.Name = "stepFactorTextBox";
             this.stepFactorTextBox.Size = new System.Drawing.Size(100, 26);
             this.stepFactorTextBox.TabIndex = 21;
@@ -243,7 +243,7 @@
             // stepFactorLabel
             // 
             this.stepFactorLabel.AutoSize = true;
-            this.stepFactorLabel.Location = new System.Drawing.Point(1799, 332);
+            this.stepFactorLabel.Location = new System.Drawing.Point(1799, 338);
             this.stepFactorLabel.Name = "stepFactorLabel";
             this.stepFactorLabel.Size = new System.Drawing.Size(88, 20);
             this.stepFactorLabel.TabIndex = 30;
@@ -251,7 +251,7 @@
             // 
             // filterFactorTextBox
             // 
-            this.filterFactorTextBox.Location = new System.Drawing.Point(1893, 361);
+            this.filterFactorTextBox.Location = new System.Drawing.Point(1893, 367);
             this.filterFactorTextBox.Name = "filterFactorTextBox";
             this.filterFactorTextBox.Size = new System.Drawing.Size(100, 26);
             this.filterFactorTextBox.TabIndex = 22;
@@ -259,7 +259,7 @@
             // filterFactorLabel
             // 
             this.filterFactorLabel.AutoSize = true;
-            this.filterFactorLabel.Location = new System.Drawing.Point(1798, 364);
+            this.filterFactorLabel.Location = new System.Drawing.Point(1798, 370);
             this.filterFactorLabel.Name = "filterFactorLabel";
             this.filterFactorLabel.Size = new System.Drawing.Size(89, 20);
             this.filterFactorLabel.TabIndex = 32;
@@ -268,7 +268,7 @@
             // trainingParametersLabel
             // 
             this.trainingParametersLabel.AutoSize = true;
-            this.trainingParametersLabel.Location = new System.Drawing.Point(1889, 306);
+            this.trainingParametersLabel.Location = new System.Drawing.Point(1889, 312);
             this.trainingParametersLabel.Name = "trainingParametersLabel";
             this.trainingParametersLabel.Size = new System.Drawing.Size(150, 20);
             this.trainingParametersLabel.TabIndex = 33;
@@ -292,49 +292,49 @@
             // 
             // rStepsTextBox
             // 
-            this.rStepsTextBox.Location = new System.Drawing.Point(1999, 67);
+            this.rStepsTextBox.Location = new System.Drawing.Point(1999, 99);
             this.rStepsTextBox.Name = "rStepsTextBox";
             this.rStepsTextBox.Size = new System.Drawing.Size(100, 26);
             this.rStepsTextBox.TabIndex = 5;
             // 
             // oStepsTextBox
             // 
-            this.oStepsTextBox.Location = new System.Drawing.Point(1999, 99);
+            this.oStepsTextBox.Location = new System.Drawing.Point(1999, 131);
             this.oStepsTextBox.Name = "oStepsTextBox";
             this.oStepsTextBox.Size = new System.Drawing.Size(100, 26);
             this.oStepsTextBox.TabIndex = 8;
             // 
             // c1StepsTextBox
             // 
-            this.c1StepsTextBox.Location = new System.Drawing.Point(1999, 131);
+            this.c1StepsTextBox.Location = new System.Drawing.Point(1999, 163);
             this.c1StepsTextBox.Name = "c1StepsTextBox";
             this.c1StepsTextBox.Size = new System.Drawing.Size(100, 26);
             this.c1StepsTextBox.TabIndex = 11;
             // 
-            // p1StepsTextBox
+            // pStepsTextBox
             // 
-            this.p1StepsTextBox.Location = new System.Drawing.Point(1999, 195);
-            this.p1StepsTextBox.Name = "p1StepsTextBox";
-            this.p1StepsTextBox.Size = new System.Drawing.Size(100, 26);
-            this.p1StepsTextBox.TabIndex = 17;
+            this.pStepsTextBox.Location = new System.Drawing.Point(1999, 227);
+            this.pStepsTextBox.Name = "pStepsTextBox";
+            this.pStepsTextBox.Size = new System.Drawing.Size(100, 26);
+            this.pStepsTextBox.TabIndex = 17;
             // 
             // c2StepsTextBox
             // 
-            this.c2StepsTextBox.Location = new System.Drawing.Point(1999, 163);
+            this.c2StepsTextBox.Location = new System.Drawing.Point(1999, 195);
             this.c2StepsTextBox.Name = "c2StepsTextBox";
             this.c2StepsTextBox.Size = new System.Drawing.Size(100, 26);
             this.c2StepsTextBox.TabIndex = 14;
             // 
             // c2MaxTextBox
             // 
-            this.c2MaxTextBox.Location = new System.Drawing.Point(1893, 163);
+            this.c2MaxTextBox.Location = new System.Drawing.Point(1893, 195);
             this.c2MaxTextBox.Name = "c2MaxTextBox";
             this.c2MaxTextBox.Size = new System.Drawing.Size(100, 26);
             this.c2MaxTextBox.TabIndex = 13;
             // 
             // c2MinTextBox
             // 
-            this.c2MinTextBox.Location = new System.Drawing.Point(1787, 163);
+            this.c2MinTextBox.Location = new System.Drawing.Point(1787, 195);
             this.c2MinTextBox.Name = "c2MinTextBox";
             this.c2MinTextBox.Size = new System.Drawing.Size(100, 26);
             this.c2MinTextBox.TabIndex = 12;
@@ -342,65 +342,15 @@
             // c2Label
             // 
             this.c2Label.AutoSize = true;
-            this.c2Label.Location = new System.Drawing.Point(1752, 166);
+            this.c2Label.Location = new System.Drawing.Point(1752, 198);
             this.c2Label.Name = "c2Label";
             this.c2Label.Size = new System.Drawing.Size(29, 20);
             this.c2Label.TabIndex = 40;
             this.c2Label.Text = "C2";
             // 
-            // p2StepsTextBox
-            // 
-            this.p2StepsTextBox.Location = new System.Drawing.Point(1999, 227);
-            this.p2StepsTextBox.Name = "p2StepsTextBox";
-            this.p2StepsTextBox.Size = new System.Drawing.Size(100, 26);
-            this.p2StepsTextBox.TabIndex = 20;
-            // 
-            // p2MaxTextBox
-            // 
-            this.p2MaxTextBox.Location = new System.Drawing.Point(1893, 227);
-            this.p2MaxTextBox.Name = "p2MaxTextBox";
-            this.p2MaxTextBox.Size = new System.Drawing.Size(100, 26);
-            this.p2MaxTextBox.TabIndex = 19;
-            // 
-            // p2MinTextBox
-            // 
-            this.p2MinTextBox.Location = new System.Drawing.Point(1787, 227);
-            this.p2MinTextBox.Name = "p2MinTextBox";
-            this.p2MinTextBox.Size = new System.Drawing.Size(100, 26);
-            this.p2MinTextBox.TabIndex = 18;
-            // 
-            // p2Label
-            // 
-            this.p2Label.AutoSize = true;
-            this.p2Label.Location = new System.Drawing.Point(1753, 230);
-            this.p2Label.Name = "p2Label";
-            this.p2Label.Size = new System.Drawing.Size(28, 20);
-            this.p2Label.TabIndex = 44;
-            this.p2Label.Text = "P2";
-            // 
-            // oneOnlyCheckBox
-            // 
-            this.oneOnlyCheckBox.AutoSize = true;
-            this.oneOnlyCheckBox.Location = new System.Drawing.Point(1893, 394);
-            this.oneOnlyCheckBox.Name = "oneOnlyCheckBox";
-            this.oneOnlyCheckBox.Size = new System.Drawing.Size(76, 24);
-            this.oneOnlyCheckBox.TabIndex = 23;
-            this.oneOnlyCheckBox.Text = "1 only";
-            this.oneOnlyCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // twoOnlyCheckBox
-            // 
-            this.twoOnlyCheckBox.AutoSize = true;
-            this.twoOnlyCheckBox.Location = new System.Drawing.Point(1893, 425);
-            this.twoOnlyCheckBox.Name = "twoOnlyCheckBox";
-            this.twoOnlyCheckBox.Size = new System.Drawing.Size(76, 24);
-            this.twoOnlyCheckBox.TabIndex = 24;
-            this.twoOnlyCheckBox.Text = "2 only";
-            this.twoOnlyCheckBox.UseVisualStyleBackColor = true;
-            // 
             // resetButton
             // 
-            this.resetButton.Location = new System.Drawing.Point(2024, 671);
+            this.resetButton.Location = new System.Drawing.Point(2024, 674);
             this.resetButton.Name = "resetButton";
             this.resetButton.Size = new System.Drawing.Size(75, 36);
             this.resetButton.TabIndex = 27;
@@ -410,7 +360,7 @@
             // 
             // returnDateTextBox
             // 
-            this.returnDateTextBox.Location = new System.Drawing.Point(1893, 498);
+            this.returnDateTextBox.Location = new System.Drawing.Point(1893, 500);
             this.returnDateTextBox.Name = "returnDateTextBox";
             this.returnDateTextBox.Size = new System.Drawing.Size(100, 26);
             this.returnDateTextBox.TabIndex = 100;
@@ -418,31 +368,77 @@
             // returnDateLabel
             // 
             this.returnDateLabel.AutoSize = true;
-            this.returnDateLabel.Location = new System.Drawing.Point(1793, 501);
+            this.returnDateLabel.Location = new System.Drawing.Point(1793, 503);
             this.returnDateLabel.Name = "returnDateLabel";
             this.returnDateLabel.Size = new System.Drawing.Size(94, 20);
             this.returnDateLabel.TabIndex = 101;
             this.returnDateLabel.Text = "Return date";
+            // 
+            // iMinTextBox
+            // 
+            this.iMinTextBox.Location = new System.Drawing.Point(1787, 67);
+            this.iMinTextBox.Name = "iMinTextBox";
+            this.iMinTextBox.Size = new System.Drawing.Size(100, 26);
+            this.iMinTextBox.TabIndex = 102;
+            // 
+            // iMaxTextBox
+            // 
+            this.iMaxTextBox.Location = new System.Drawing.Point(1893, 67);
+            this.iMaxTextBox.Name = "iMaxTextBox";
+            this.iMaxTextBox.Size = new System.Drawing.Size(100, 26);
+            this.iMaxTextBox.TabIndex = 103;
+            // 
+            // iStepsTextBox
+            // 
+            this.iStepsTextBox.Location = new System.Drawing.Point(1999, 67);
+            this.iStepsTextBox.Name = "iStepsTextBox";
+            this.iStepsTextBox.Size = new System.Drawing.Size(100, 26);
+            this.iStepsTextBox.TabIndex = 104;
+            // 
+            // iLabel
+            // 
+            this.iLabel.AutoSize = true;
+            this.iLabel.Location = new System.Drawing.Point(1767, 70);
+            this.iLabel.Name = "iLabel";
+            this.iLabel.Size = new System.Drawing.Size(14, 20);
+            this.iLabel.TabIndex = 105;
+            this.iLabel.Text = "I";
+            // 
+            // windowTextBox
+            // 
+            this.windowTextBox.Location = new System.Drawing.Point(1893, 399);
+            this.windowTextBox.Name = "windowTextBox";
+            this.windowTextBox.Size = new System.Drawing.Size(100, 26);
+            this.windowTextBox.TabIndex = 106;
+            // 
+            // windowLabel
+            // 
+            this.windowLabel.AutoSize = true;
+            this.windowLabel.Location = new System.Drawing.Point(1822, 402);
+            this.windowLabel.Name = "windowLabel";
+            this.windowLabel.Size = new System.Drawing.Size(65, 20);
+            this.windowLabel.TabIndex = 107;
+            this.windowLabel.Text = "Window";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2111, 1298);
+            this.Controls.Add(this.windowLabel);
+            this.Controls.Add(this.windowTextBox);
+            this.Controls.Add(this.iLabel);
+            this.Controls.Add(this.iStepsTextBox);
+            this.Controls.Add(this.iMaxTextBox);
+            this.Controls.Add(this.iMinTextBox);
             this.Controls.Add(this.returnDateLabel);
             this.Controls.Add(this.returnDateTextBox);
             this.Controls.Add(this.resetButton);
-            this.Controls.Add(this.twoOnlyCheckBox);
-            this.Controls.Add(this.oneOnlyCheckBox);
-            this.Controls.Add(this.p2StepsTextBox);
-            this.Controls.Add(this.p2MaxTextBox);
-            this.Controls.Add(this.p2MinTextBox);
-            this.Controls.Add(this.p2Label);
             this.Controls.Add(this.c2StepsTextBox);
             this.Controls.Add(this.c2MaxTextBox);
             this.Controls.Add(this.c2MinTextBox);
             this.Controls.Add(this.c2Label);
-            this.Controls.Add(this.p1StepsTextBox);
+            this.Controls.Add(this.pStepsTextBox);
             this.Controls.Add(this.c1StepsTextBox);
             this.Controls.Add(this.oStepsTextBox);
             this.Controls.Add(this.rStepsTextBox);
@@ -453,8 +449,8 @@
             this.Controls.Add(this.filterFactorTextBox);
             this.Controls.Add(this.stepFactorLabel);
             this.Controls.Add(this.stepFactorTextBox);
-            this.Controls.Add(this.p1MaxTextBox);
-            this.Controls.Add(this.p1MinTextBox);
+            this.Controls.Add(this.pMaxTextBox);
+            this.Controls.Add(this.pMinTextBox);
             this.Controls.Add(this.c1MaxTextBox);
             this.Controls.Add(this.c1MinTextBox);
             this.Controls.Add(this.oMaxTextBox);
@@ -463,7 +459,7 @@
             this.Controls.Add(this.rMinTextBox);
             this.Controls.Add(this.f0MaxTextBox);
             this.Controls.Add(this.f0MinTextBox);
-            this.Controls.Add(this.p1Label);
+            this.Controls.Add(this.pLabel);
             this.Controls.Add(this.c1Label);
             this.Controls.Add(this.oLabel);
             this.Controls.Add(this.rLabel);
@@ -491,7 +487,7 @@
         private System.Windows.Forms.Label rLabel;
         private System.Windows.Forms.Label oLabel;
         private System.Windows.Forms.Label c1Label;
-        private System.Windows.Forms.Label p1Label;
+        private System.Windows.Forms.Label pLabel;
         private System.Windows.Forms.TextBox f0MinTextBox;
         private System.Windows.Forms.TextBox f0MaxTextBox;
         private System.Windows.Forms.TextBox rMaxTextBox;
@@ -500,8 +496,8 @@
         private System.Windows.Forms.TextBox oMinTextBox;
         private System.Windows.Forms.TextBox c1MaxTextBox;
         private System.Windows.Forms.TextBox c1MinTextBox;
-        private System.Windows.Forms.TextBox p1MaxTextBox;
-        private System.Windows.Forms.TextBox p1MinTextBox;
+        private System.Windows.Forms.TextBox pMaxTextBox;
+        private System.Windows.Forms.TextBox pMinTextBox;
         private System.Windows.Forms.TextBox stepFactorTextBox;
         private System.Windows.Forms.Label stepFactorLabel;
         private System.Windows.Forms.TextBox filterFactorTextBox;
@@ -512,20 +508,20 @@
         private System.Windows.Forms.TextBox rStepsTextBox;
         private System.Windows.Forms.TextBox oStepsTextBox;
         private System.Windows.Forms.TextBox c1StepsTextBox;
-        private System.Windows.Forms.TextBox p1StepsTextBox;
+        private System.Windows.Forms.TextBox pStepsTextBox;
         private System.Windows.Forms.TextBox c2StepsTextBox;
         private System.Windows.Forms.TextBox c2MaxTextBox;
         private System.Windows.Forms.TextBox c2MinTextBox;
         private System.Windows.Forms.Label c2Label;
-        private System.Windows.Forms.TextBox p2StepsTextBox;
-        private System.Windows.Forms.TextBox p2MaxTextBox;
-        private System.Windows.Forms.TextBox p2MinTextBox;
-        private System.Windows.Forms.Label p2Label;
-        private System.Windows.Forms.CheckBox oneOnlyCheckBox;
-        private System.Windows.Forms.CheckBox twoOnlyCheckBox;
         private System.Windows.Forms.Button resetButton;
         private System.Windows.Forms.TextBox returnDateTextBox;
         private System.Windows.Forms.Label returnDateLabel;
+        private System.Windows.Forms.TextBox iMinTextBox;
+        private System.Windows.Forms.TextBox iMaxTextBox;
+        private System.Windows.Forms.TextBox iStepsTextBox;
+        private System.Windows.Forms.Label iLabel;
+        private System.Windows.Forms.TextBox windowTextBox;
+        private System.Windows.Forms.Label windowLabel;
     }
 }
 

@@ -19,28 +19,27 @@ namespace COVID
 
         // Model parameters.
         ParameterRange f0Range;
+        ParameterRange iRange;
         ParameterRange rRange;
         ParameterRange orderDayRange;
         ParameterRange c1Range;
         ParameterRange c2Range;
-        ParameterRange p1Range;
-        ParameterRange p2Range;
+        ParameterRange pRange;
 
         double returnDay = -1;
 
         // Training parameters.
         double stepFactor;
         double filterFactor;
-        bool oneOnly;
-        bool twoOnly;
+        int window;
 
         double dF0;
+        double dI;
         double dR;
         double dO;
         double dC1;
         double dC2;
-        double dP1;
-        double dP2;
+        double dP;
 
         public MainForm()
         {
@@ -77,30 +76,29 @@ namespace COVID
             var orderDay = (orderDate - startDate).TotalDays;
 
             f0Range = new ParameterRange(0.01, 1, 10000);
-            rRange = new ParameterRange(3, 60, 100000);
-            orderDayRange = new ParameterRange(orderDay, orderDay + 20, 10000);
-            c1Range = new ParameterRange(1E-6, 2E-5, 1000000);
-            c2Range = new ParameterRange(1E-6, 2E-5, 1000000);
-            p1Range = new ParameterRange(15000, 200000, 1000000);
-            p2Range = new ParameterRange(15000, 200000, 1000000);
+            iRange = new ParameterRange(0, 10, 100000);
+            rRange = new ParameterRange(1, 10, 100000);
+            orderDayRange = new ParameterRange(orderDay, orderDay + 10, 10000);
+            c1Range = new ParameterRange(1E-6, 1E-5, 100000);
+            c2Range = new ParameterRange(1E-6, 1E-5, 100000);
+            pRange = new ParameterRange(50000, 150000, 100000);
 
             stepFactor = 100;
-            filterFactor = 1.2;
-            oneOnly = false;
-            twoOnly = false;
+            filterFactor = 1;
+            window = 1;
 
             f0Range.ToView(f0MinTextBox, f0MaxTextBox, f0StepsTextBox);
+            iRange.ToView(iMinTextBox, iMaxTextBox, iStepsTextBox);
             rRange.ToView(rMinTextBox, rMaxTextBox, rStepsTextBox);
             orderDayRange.ToView(oMinTextBox, oMaxTextBox, oStepsTextBox);
             c1Range.ToView(c1MinTextBox, c1MaxTextBox, c1StepsTextBox);
             c2Range.ToView(c2MinTextBox, c2MaxTextBox, c2StepsTextBox);
-            p1Range.ToView(p1MinTextBox, p1MaxTextBox, p1StepsTextBox);
-            p2Range.ToView(p2MinTextBox, p2MaxTextBox, p2StepsTextBox);
+            pRange.ToView(pMinTextBox, pMaxTextBox, pStepsTextBox);
 
             stepFactorTextBox.Text = stepFactor.ToString();
             filterFactorTextBox.Text = filterFactor.ToString();
-            oneOnlyCheckBox.Checked = oneOnly;
-            twoOnlyCheckBox.Checked = twoOnly;
+            windowTextBox.Text = window.ToString();
+            returnDateTextBox.Text = "/6/1/2020";
 
             SetStop(true);
         }
@@ -112,25 +110,24 @@ namespace COVID
             try
             {
                 f0Range = new ParameterRange(f0MinTextBox, f0MaxTextBox, f0StepsTextBox);
+                iRange = new ParameterRange(iMinTextBox, iMaxTextBox, iStepsTextBox);
                 rRange = new ParameterRange(rMinTextBox, rMaxTextBox, rStepsTextBox);
                 orderDayRange = new ParameterRange(oMinTextBox, oMaxTextBox, oStepsTextBox);
                 c1Range = new ParameterRange(c1MinTextBox, c1MaxTextBox, c1StepsTextBox);
                 c2Range = new ParameterRange(c2MinTextBox, c2MaxTextBox, c2StepsTextBox);
-                p1Range = new ParameterRange(p1MinTextBox, p1MaxTextBox, p1StepsTextBox);
-                p2Range = new ParameterRange(p2MinTextBox, p2MaxTextBox, p2StepsTextBox);
+                pRange = new ParameterRange(pMinTextBox, pMaxTextBox, pStepsTextBox);
 
                 stepFactor = Convert.ToDouble(stepFactorTextBox.Text);
                 filterFactor = Convert.ToDouble(filterFactorTextBox.Text);
-                oneOnly = oneOnlyCheckBox.Checked;
-                twoOnly = twoOnlyCheckBox.Checked;
+                window = Convert.ToInt32(windowTextBox.Text);
 
                 dF0 = f0Range.Diff / f0Range.Steps * stepFactor;
+                dI = iRange.Diff / iRange.Steps * stepFactor;
                 dR = rRange.Diff / rRange.Steps * stepFactor;
                 dO = orderDayRange.Diff / orderDayRange.Steps * stepFactor;
                 dC1 = c1Range.Diff / c1Range.Steps * stepFactor;
                 dC2 = c2Range.Diff / c2Range.Steps * stepFactor;
-                dP1 = p1Range.Diff / p1Range.Steps * stepFactor;
-                dP2 = p2Range.Diff / p2Range.Steps * stepFactor;
+                dP = pRange.Diff / pRange.Steps * stepFactor;
 
                 DateTime returnDate;
                 if (DateTime.TryParse(returnDateTextBox.Text, out returnDate))
@@ -144,7 +141,7 @@ namespace COVID
 
                 if (bestModel != null)
                 {
-                    bestModel = new Model(bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P1, bestModel.P2, returnDay);
+                    bestModel = new Model(bestModel.F0, bestModel.I, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P, returnDay);
                     DisplayBestModelData();
                 }
             }
@@ -212,7 +209,7 @@ namespace COVID
             var error = CalculateError(model, modelData, valuesCache);
 
             var noOrderModelData = new double[modelData.Length];
-            var noOrderModel = new Model(model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C1, model.P1, model.P1, model.ReturnDay);
+            var noOrderModel = new Model(model.F0, model.I, model.R, model.StartDate, model.OrderDay, model.C1, model.C1, model.P, model.ReturnDay);
             noOrderModel.Calculate(noOrderModelData, valuesCache);
 
             int turningPoint = -1;
@@ -293,9 +290,9 @@ namespace COVID
                 modelDailySeries.Legend = legend.Name;
                 modelDailySeries.Color = Color.LightBlue;
                 modelDailySeries.YAxisType = AxisType.Secondary;
-                for (int i = 1; i < modelData.Length; i++)
+                for (int i = window; i < modelData.Length; i++)
                 {
-                    var value = modelData[i] - modelData[i - 1];
+                    var value = modelData[i] - modelData[i - window];
                     var point = modelDailySeries.Points[modelDailySeries.Points.AddXY(i, value)];
                     point.AxisLabel = startDate.AddDays(i).ToShortDateString();
                     point.ToolTip = Math.Round(value).ToString();
@@ -311,9 +308,9 @@ namespace COVID
                 actualDailySeries.Legend = legend.Name;
                 actualDailySeries.Color = Color.PaleVioletRed;
                 actualDailySeries.YAxisType = AxisType.Secondary;
-                for (int i = 1; i < actualData.Length; i++)
+                for (int i = window; i < actualData.Length; i++)
                 {
-                    var value = actualData[i] - actualData[i - 1];
+                    var value = actualData[i] - actualData[i - window];
                     var point = actualDailySeries.Points[actualDailySeries.Points.AddXY(i, value)];
                     point.AxisLabel = startDate.AddDays(i).ToShortDateString();
                     point.ToolTip = Math.Round(value).ToString();
@@ -435,17 +432,17 @@ namespace COVID
             PrintErrors(results, valuesCache);
         }
 
-        Model CreateModel(Model baseModel, double f0, double r, DateTime startDate, double orderDay, double c1, double c2, double p1, double p2, double returnDay)
+        Model CreateModel(Model baseModel, double f0, double i, double r, DateTime startDate, double orderDay, double c1, double c2, double p, double returnDay)
         {
             return new Model(
-                twoOnly && baseModel != null ? baseModel.F0 : f0Range.Trim(f0),
+                f0Range.Trim(f0),
+                iRange.Trim(i),
                 rRange.Trim(r),
                 startDate,
-                (oneOnly || twoOnly) && baseModel != null ? baseModel.OrderDay : orderDayRange.Trim(orderDay),
-                twoOnly && baseModel != null ? baseModel.C1 : c1Range.Trim(c1),
-                oneOnly && baseModel != null ? baseModel.C2 : c2Range.Trim(c2),
-                twoOnly && baseModel != null ? baseModel.P1 : p1Range.Trim(p1),
-                oneOnly && baseModel != null ? baseModel.P2 : p2Range.Trim(p2),
+                orderDayRange.Trim(orderDay),
+                c1Range.Trim(c1),
+                c2Range.Trim(c2),
+                pRange.Trim(p),
                 returnDay);
         }
 
@@ -514,8 +511,8 @@ namespace COVID
             var error = CalculateError(bestModel, results, valuesCache);
 
             {
-                var plusModel = CreateModel(bestModel, bestModel.F0 + dF0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P1, bestModel.P2, bestModel.ReturnDay);
-                var minusModel = CreateModel(bestModel, bestModel.F0 - dF0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P1, bestModel.P2, bestModel.ReturnDay);
+                var plusModel = CreateModel(bestModel, bestModel.F0 + dF0, bestModel.I, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P, bestModel.ReturnDay);
+                var minusModel = CreateModel(bestModel, bestModel.F0 - dF0, bestModel.I, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P, bestModel.ReturnDay);
                 var plusError = CalculateError(plusModel, results, valuesCache);
                 var minusError = CalculateError(minusModel, results, valuesCache);
                 ConsoleWriteLine($"F0+: {plusError - error}");
@@ -523,8 +520,17 @@ namespace COVID
             }
 
             {
-                var plusModel = CreateModel(bestModel, bestModel.F0, bestModel.R + dR, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P1, bestModel.P2, bestModel.ReturnDay);
-                var minusModel = CreateModel(bestModel, bestModel.F0, bestModel.R - dR, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P1, bestModel.P2, bestModel.ReturnDay);
+                var plusModel = CreateModel(bestModel, bestModel.F0, bestModel.I + dI, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P, bestModel.ReturnDay);
+                var minusModel = CreateModel(bestModel, bestModel.F0, bestModel.I - dI, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P, bestModel.ReturnDay);
+                var plusError = CalculateError(plusModel, results, valuesCache);
+                var minusError = CalculateError(minusModel, results, valuesCache);
+                ConsoleWriteLine($"I+: {plusError - error}");
+                ConsoleWriteLine($"I-: {error - minusError}");
+            }
+
+            {
+                var plusModel = CreateModel(bestModel, bestModel.F0, bestModel.I, bestModel.R + dR, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P, bestModel.ReturnDay);
+                var minusModel = CreateModel(bestModel, bestModel.F0, bestModel.I, bestModel.R - dR, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P, bestModel.ReturnDay);
                 var plusError = CalculateError(plusModel, results, valuesCache);
                 var minusError = CalculateError(minusModel, results, valuesCache);
                 ConsoleWriteLine($"R+: {plusError - error}");
@@ -532,8 +538,8 @@ namespace COVID
             }
 
             {
-                var plusModel = CreateModel(bestModel, bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay + dO, bestModel.C1, bestModel.C2, bestModel.P1, bestModel.P2, bestModel.ReturnDay);
-                var minusModel = CreateModel(bestModel, bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay - dO, bestModel.C1, bestModel.C2, bestModel.P1, bestModel.P2, bestModel.ReturnDay);
+                var plusModel = CreateModel(bestModel, bestModel.F0, bestModel.I, bestModel.R, bestModel.StartDate, bestModel.OrderDay + dO, bestModel.C1, bestModel.C2, bestModel.P, bestModel.ReturnDay);
+                var minusModel = CreateModel(bestModel, bestModel.F0, bestModel.I, bestModel.R, bestModel.StartDate, bestModel.OrderDay - dO, bestModel.C1, bestModel.C2, bestModel.P, bestModel.ReturnDay);
                 var plusError = CalculateError(plusModel, results, valuesCache);
                 var minusError = CalculateError(minusModel, results, valuesCache);
                 ConsoleWriteLine($"O+: {plusError - error}");
@@ -541,8 +547,8 @@ namespace COVID
             }
 
             {
-                var plusModel = CreateModel(bestModel, bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1 + dC1, bestModel.C2, bestModel.P1, bestModel.P2, bestModel.ReturnDay);
-                var minusModel = CreateModel(bestModel, bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1 - dC1, bestModel.C2, bestModel.P1, bestModel.P2, bestModel.ReturnDay);
+                var plusModel = CreateModel(bestModel, bestModel.F0, bestModel.I, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1 + dC1, bestModel.C2, bestModel.P, bestModel.ReturnDay);
+                var minusModel = CreateModel(bestModel, bestModel.F0, bestModel.I, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1 - dC1, bestModel.C2, bestModel.P, bestModel.ReturnDay);
                 var plusError = CalculateError(plusModel, results, valuesCache);
                 var minusError = CalculateError(minusModel, results, valuesCache);
                 ConsoleWriteLine($"C1+: {plusError - error}");
@@ -550,42 +556,21 @@ namespace COVID
             }
 
             {
-                var plusModel = CreateModel(bestModel, bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2 + dC2, bestModel.P1, bestModel.P2, bestModel.ReturnDay);
-                var minusModel = CreateModel(bestModel, bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2 - dC2, bestModel.P1, bestModel.P2, bestModel.ReturnDay);
+                var plusModel = CreateModel(bestModel, bestModel.F0, bestModel.I, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2 + dC2, bestModel.P, bestModel.ReturnDay);
+                var minusModel = CreateModel(bestModel, bestModel.F0, bestModel.I, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2 - dC2, bestModel.P, bestModel.ReturnDay);
                 var plusError = CalculateError(plusModel, results, valuesCache);
                 var minusError = CalculateError(minusModel, results, valuesCache);
                 ConsoleWriteLine($"C2+: {plusError - error}");
                 ConsoleWriteLine($"C2-: {error - minusError}");
             }
 
-            if (bestModel.P1 == bestModel.P2)
             {
-                var plusModel = CreateModel(bestModel, bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P1 + dP1, bestModel.P2 + dP1, bestModel.ReturnDay);
-                var minusModel = CreateModel(bestModel, bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P1 - dP1, bestModel.P2 - dP1, bestModel.ReturnDay);
+                var plusModel = CreateModel(bestModel, bestModel.F0, bestModel.I, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P + dP, bestModel.ReturnDay);
+                var minusModel = CreateModel(bestModel, bestModel.F0, bestModel.I, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P - dP, bestModel.ReturnDay);
                 var plusError = CalculateError(plusModel, results, valuesCache);
                 var minusError = CalculateError(minusModel, results, valuesCache);
                 ConsoleWriteLine($"P+: {plusError - error}");
                 ConsoleWriteLine($"P-: {error - minusError}");
-            }
-            else
-            {
-                {
-                    var plusModel = CreateModel(bestModel, bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P1 + dP1, bestModel.P2, bestModel.ReturnDay);
-                    var minusModel = CreateModel(bestModel, bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P1 - dP1, bestModel.P2, bestModel.ReturnDay);
-                    var plusError = CalculateError(plusModel, results, valuesCache);
-                    var minusError = CalculateError(minusModel, results, valuesCache);
-                    ConsoleWriteLine($"P1+: {plusError - error}");
-                    ConsoleWriteLine($"P1-: {error - minusError}");
-                }
-
-                {
-                    var plusModel = CreateModel(bestModel, bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P1, bestModel.P2 + dP2, bestModel.ReturnDay);
-                    var minusModel = CreateModel(bestModel, bestModel.F0, bestModel.R, bestModel.StartDate, bestModel.OrderDay, bestModel.C1, bestModel.C2, bestModel.P1, bestModel.P2 - dP2, bestModel.ReturnDay);
-                    var plusError = CalculateError(plusModel, results, valuesCache);
-                    var minusError = CalculateError(minusModel, results, valuesCache);
-                    ConsoleWriteLine($"P2+: {plusError - error}");
-                    ConsoleWriteLine($"P2-: {error - minusError}");
-                }
             }
         }
 
@@ -595,144 +580,80 @@ namespace COVID
             var model = CreateModel(
                 bestModel,
                 f0Range.GetRandom(rnd),
+                iRange.GetRandom(rnd),
                 rRange.GetRandom(rnd),
                 startDate,
                 orderDayRange.GetRandom(rnd),
                 c1Range.GetRandom(rnd),
                 c2Range.GetRandom(rnd),
-                p1Range.GetRandom(rnd),
-                p2Range.GetRandom(rnd),
+                pRange.GetRandom(rnd),
                 returnDay);
             yield return model;
-
-            // Try p1 = p2.
-            var p = p1Range.GetRandom(rnd);
-            yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, p, p, model.ReturnDay);
 
             // Randomized best.
             if (bestModel != null)
             {
                 var randomization = rnd.NextDouble();
-                if (bestModel.P1 == bestModel.P2)
-                {
-                    p = rnd.NextDouble() > randomization ? bestModel.P1 : p1Range.GetRandom(rnd);
-                    yield return CreateModel(
-                        bestModel,
-                        rnd.NextDouble() > randomization ? bestModel.F0 : f0Range.GetRandom(rnd),
-                        rnd.NextDouble() > randomization ? bestModel.R : rRange.GetRandom(rnd),
-                        startDate,
-                        rnd.NextDouble() > randomization ? bestModel.OrderDay : orderDayRange.GetRandom(rnd),
-                        rnd.NextDouble() > randomization ? bestModel.C1 : c1Range.GetRandom(rnd),
-                        rnd.NextDouble() > randomization ? bestModel.C2 : c2Range.GetRandom(rnd),
-                        p,
-                        p,
-                        returnDay);
+                yield return CreateModel(
+                    bestModel,
+                    rnd.NextDouble() > randomization ? bestModel.F0 : f0Range.GetRandom(rnd),
+                    rnd.NextDouble() > randomization ? bestModel.I : iRange.GetRandom(rnd),
+                    rnd.NextDouble() > randomization ? bestModel.R : rRange.GetRandom(rnd),
+                    startDate,
+                    rnd.NextDouble() > randomization ? bestModel.OrderDay : orderDayRange.GetRandom(rnd),
+                    rnd.NextDouble() > randomization ? bestModel.C1 : c1Range.GetRandom(rnd),
+                    rnd.NextDouble() > randomization ? bestModel.C2 : c2Range.GetRandom(rnd),
+                    rnd.NextDouble() > randomization ? bestModel.P : pRange.GetRandom(rnd),
+                    returnDay);
 
-                    p = bestModel.P1 + dP1 * (1.0 - rnd.NextDouble() * 2);
-                    yield return CreateModel(
-                        bestModel,
-                        bestModel.F0 + dF0 * (1.0 - rnd.NextDouble() * 2),
-                        bestModel.R + dR * (1.0 - rnd.NextDouble() * 2),
-                        startDate,
-                        bestModel.OrderDay + dO * (1.0 - rnd.NextDouble() * 2),
-                        bestModel.C1 + dC1 * (1.0 - rnd.NextDouble() * 2),
-                        bestModel.C2 + dC2 * (1.0 - rnd.NextDouble() * 2),
-                        p,
-                        p,
-                        returnDay);
-                }
-                else
-                {
-                    model = CreateModel(
-                        bestModel,
-                        rnd.NextDouble() > randomization ? bestModel.F0 : f0Range.GetRandom(rnd),
-                        rnd.NextDouble() > randomization ? bestModel.R : rRange.GetRandom(rnd),
-                        startDate,
-                        rnd.NextDouble() > randomization ? bestModel.OrderDay : orderDayRange.GetRandom(rnd),
-                        rnd.NextDouble() > randomization ? bestModel.C1 : c1Range.GetRandom(rnd),
-                        rnd.NextDouble() > randomization ? bestModel.C2 : c2Range.GetRandom(rnd),
-                        rnd.NextDouble() > randomization ? bestModel.P1 : p1Range.GetRandom(rnd),
-                        rnd.NextDouble() > randomization ? bestModel.P2 : p2Range.GetRandom(rnd),
-                        returnDay);
-                    yield return model;
-
-                    // Try p1 = p2.
-                    yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P1, model.ReturnDay);
-
-                    model = CreateModel(
-                        bestModel,
-                        bestModel.F0 + dF0 * (1.0 - rnd.NextDouble() * 2),
-                        bestModel.R + dR * (1.0 - rnd.NextDouble() * 2),
-                        startDate,
-                        bestModel.OrderDay + dO * (1.0 - rnd.NextDouble() * 2),
-                        bestModel.C1 + dC1 * (1.0 - rnd.NextDouble() * 2),
-                        bestModel.C2 + dC2 * (1.0 - rnd.NextDouble() * 2),
-                        bestModel.P1 + dP1 * (1.0 - rnd.NextDouble() * 2),
-                        bestModel.P2 + dP2 * (1.0 - rnd.NextDouble() * 2),
-                        returnDay);
-                    yield return model;
-
-                    // Try p1 = p2.
-                    yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P1, model.ReturnDay);
-                }
+                yield return CreateModel(
+                    bestModel,
+                    bestModel.F0 + dF0 * (1.0 - rnd.NextDouble() * 2),
+                    bestModel.I + dI * (1.0 - rnd.NextDouble() * 2),
+                    bestModel.R + dR * (1.0 - rnd.NextDouble() * 2),
+                    startDate,
+                    bestModel.OrderDay + dO * (1.0 - rnd.NextDouble() * 2),
+                    bestModel.C1 + dC1 * (1.0 - rnd.NextDouble() * 2),
+                    bestModel.C2 + dC2 * (1.0 - rnd.NextDouble() * 2),
+                    bestModel.P + dP * (1.0 - rnd.NextDouble() * 2),
+                    returnDay);
             }
         }
 
         private IEnumerable<Model> GetNearbyModels(Model model)
         {
-            yield return CreateModel(model, model.F0 + dF0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2, model.ReturnDay);
-            yield return CreateModel(model, model.F0 - dF0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2, model.ReturnDay);
+            yield return CreateModel(model, model.F0 + dF0, model.I, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P, model.ReturnDay);
+            yield return CreateModel(model, model.F0 - dF0, model.I, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P, model.ReturnDay);
 
-            yield return CreateModel(model, model.F0, model.R + dR, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2, model.ReturnDay);
-            yield return CreateModel(model, model.F0, model.R - dR, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2, model.ReturnDay);
+            yield return CreateModel(model, model.F0, model.I + dI, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P, model.ReturnDay);
+            yield return CreateModel(model, model.F0, model.I - dI, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P, model.ReturnDay);
 
-            yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay + dO, model.C1, model.C2, model.P1, model.P2, model.ReturnDay);
-            yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay - dO, model.C1, model.C2, model.P1, model.P2, model.ReturnDay);
+            yield return CreateModel(model, model.F0, model.I, model.R + dR, model.StartDate, model.OrderDay, model.C1, model.C2, model.P, model.ReturnDay);
+            yield return CreateModel(model, model.F0, model.I, model.R - dR, model.StartDate, model.OrderDay, model.C1, model.C2, model.P, model.ReturnDay);
 
-            yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1 + dC1, model.C2, model.P1, model.P2, model.ReturnDay);
-            yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1 - dC1, model.C2, model.P1, model.P2, model.ReturnDay);
+            yield return CreateModel(model, model.F0, model.I, model.R, model.StartDate, model.OrderDay + dO, model.C1, model.C2, model.P, model.ReturnDay);
+            yield return CreateModel(model, model.F0, model.I, model.R, model.StartDate, model.OrderDay - dO, model.C1, model.C2, model.P, model.ReturnDay);
 
-            yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2 + dC2, model.P1, model.P2, model.ReturnDay);
-            yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2 - dC2, model.P1, model.P2, model.ReturnDay);
+            yield return CreateModel(model, model.F0, model.I, model.R, model.StartDate, model.OrderDay, model.C1 + dC1, model.C2, model.P, model.ReturnDay);
+            yield return CreateModel(model, model.F0, model.I, model.R, model.StartDate, model.OrderDay, model.C1 - dC1, model.C2, model.P, model.ReturnDay);
 
-            if (model.P1 == model.P2)
-            {
-                yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 + dP1, model.P2 + dP1, model.ReturnDay);
-                yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 - dP1, model.P2 - dP1, model.ReturnDay);
+            yield return CreateModel(model, model.F0, model.I, model.R, model.StartDate, model.OrderDay, model.C1, model.C2 + dC2, model.P, model.ReturnDay);
+            yield return CreateModel(model, model.F0, model.I, model.R, model.StartDate, model.OrderDay, model.C1, model.C2 - dC2, model.P, model.ReturnDay);
 
-                var p = model.P1 + dP1 * (1.0 - rnd.NextDouble() * 2);
-                yield return CreateModel(
-                    model,
-                    model.F0 + dF0 * (1.0 - rnd.NextDouble() * 2),
-                    model.R + dR * (1.0 - rnd.NextDouble() * 2),
-                    startDate,
-                    model.OrderDay + dO * (1.0 - rnd.NextDouble() * 2),
-                    model.C1 + dC1 * (1.0 - rnd.NextDouble() * 2),
-                    model.C2 + dC2 * (1.0 - rnd.NextDouble() * 2),
-                    p,
-                    p,
-                    returnDay);
-            }
-            else
-            {
-                yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 + dP1, model.P2, model.ReturnDay);
-                yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1 - dP1, model.P2, model.ReturnDay);
+            yield return CreateModel(model, model.F0, model.I, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P + dP, model.ReturnDay);
+            yield return CreateModel(model, model.F0, model.I, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P - dP, model.ReturnDay);
 
-                yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2 + dP2, model.ReturnDay);
-                yield return CreateModel(model, model.F0, model.R, model.StartDate, model.OrderDay, model.C1, model.C2, model.P1, model.P2 - dP2, model.ReturnDay);
-
-                yield return CreateModel(
-                    model,
-                    model.F0 + dF0 * (1.0 - rnd.NextDouble() * 2),
-                    model.R + dR * (1.0 - rnd.NextDouble() * 2),
-                    startDate,
-                    model.OrderDay + dO * (1.0 - rnd.NextDouble() * 2),
-                    model.C1 + dC1 * (1.0 - rnd.NextDouble() * 2),
-                    model.C2 + dC2 * (1.0 - rnd.NextDouble() * 2),
-                    model.P1 + dP1 * (1.0 - rnd.NextDouble() * 2),
-                    model.P2 + dP2 * (1.0 - rnd.NextDouble() * 2),
-                    returnDay);
-            }
+            yield return CreateModel(
+                model,
+                model.F0 + dF0 * (1.0 - rnd.NextDouble() * 2),
+                model.I + dI * (1.0 - rnd.NextDouble() * 2),
+                model.R + dR * (1.0 - rnd.NextDouble() * 2),
+                startDate,
+                model.OrderDay + dO * (1.0 - rnd.NextDouble() * 2),
+                model.C1 + dC1 * (1.0 - rnd.NextDouble() * 2),
+                model.C2 + dC2 * (1.0 - rnd.NextDouble() * 2),
+                model.P + dP * (1.0 - rnd.NextDouble() * 2),
+                returnDay);
         }
 
         private double CalculateError(Model model, double[] results, List<double> valuesCache)
@@ -741,15 +662,11 @@ namespace COVID
             double error = 0;
 
             var end = actualData.Length;
-            if (oneOnly)
-            {
-                end = (int)Math.Round(model.OrderDay);
-            }
 
-            for (int i = 1; i < end; i++)
+            for (int i = window; i < end; i++)
             {
-                var value1 = results[i] - results[i - 1];
-                var value2 = actualData[i] - actualData[i - 1];
+                var value1 = results[i] - results[i - window];
+                var value2 = actualData[i] - actualData[i - window];
                 var diff = value1 - value2;
 
                 error += diff * diff;
