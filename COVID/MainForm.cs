@@ -32,6 +32,7 @@ namespace COVID
         double stepFactor;
         double filterFactor;
         int window;
+        int skip;
 
         double dF0;
         double dI;
@@ -50,7 +51,7 @@ namespace COVID
         {
             // Load data.
             var actualDataList = new List<double>();
-            using (var actualDataStream = new System.IO.StreamReader(@"COVID.txt"))
+            using (var actualDataStream = new System.IO.StreamReader(@"COVIDD.txt"))
             {
                 string line;
                 while ((line = actualDataStream.ReadLine()) != null)
@@ -76,16 +77,17 @@ namespace COVID
             var orderDay = (orderDate - startDate).TotalDays;
 
             f0Range = new ParameterRange(0.01, 1, 10000);
-            iRange = new ParameterRange(0, 10, 100000);
-            rRange = new ParameterRange(1, 10, 100000);
-            orderDayRange = new ParameterRange(orderDay, orderDay + 10, 10000);
-            c1Range = new ParameterRange(1E-6, 1E-5, 100000);
-            c2Range = new ParameterRange(1E-6, 1E-5, 100000);
-            pRange = new ParameterRange(50000, 150000, 100000);
+            iRange = new ParameterRange(0, 0, 100000);
+            rRange = new ParameterRange(1, 30, 100000);
+            orderDayRange = new ParameterRange(orderDay, orderDay + 20, 10000);
+            c1Range = new ParameterRange(1E-6, 5E-4, 100000);
+            c2Range = new ParameterRange(1E-6, 5E-4, 100000);
+            pRange = new ParameterRange(800, 50000, 100000);
 
             stepFactor = 100;
-            filterFactor = 1;
+            filterFactor = 2;
             window = 1;
+            skip = 0;
 
             f0Range.ToView(f0MinTextBox, f0MaxTextBox, f0StepsTextBox);
             iRange.ToView(iMinTextBox, iMaxTextBox, iStepsTextBox);
@@ -98,6 +100,7 @@ namespace COVID
             stepFactorTextBox.Text = stepFactor.ToString();
             filterFactorTextBox.Text = filterFactor.ToString();
             windowTextBox.Text = window.ToString();
+            skipTextBox.Text = skip.ToString();
             returnDateTextBox.Text = "/6/1/2020";
 
             SetStop(true);
@@ -120,6 +123,7 @@ namespace COVID
                 stepFactor = Convert.ToDouble(stepFactorTextBox.Text);
                 filterFactor = Convert.ToDouble(filterFactorTextBox.Text);
                 window = Convert.ToInt32(windowTextBox.Text);
+                skip = Convert.ToInt32(skipTextBox.Text);
 
                 dF0 = f0Range.Diff / f0Range.Steps * stepFactor;
                 dI = iRange.Diff / iRange.Steps * stepFactor;
@@ -212,68 +216,33 @@ namespace COVID
             var noOrderModel = new Model(model.F0, model.I, model.R, model.StartDate, model.OrderDay, model.C1, model.C1, model.P, model.ReturnDay);
             noOrderModel.Calculate(noOrderModelData, valuesCache);
 
-            int turningPoint = -1;
-            int noOrderTurningPoint = -1;
+            HashSet<int> extremums = new HashSet<int>();
+            HashSet<int> noOrderExtremums = new HashSet<int>();
             for (int i = 0; i < modelData.Length; i++)
             {
-                string d2FLabel = string.Empty;
-                if (i > 0 && i < modelData.Length - 1)
+                if (i > 1 && i < modelData.Length - 2)
                 {
                     {
-                        double d2F = modelData[i - 1] + modelData[i + 1] - 2 * modelData[i];
-                        if (d2F > 0)
+                        double d = modelData[i] - modelData[i - 1];
+                        double dMinus = modelData[i - 1] - modelData[i - 2];
+                        double dPlus = modelData[i + 1] - modelData[i];
+                        if (d > dMinus && d > dPlus)
                         {
-                            d2FLabel = "+";
-                            turningPoint = -1;
-                        }
-                        else if (d2F < 0)
-                        {
-                            d2FLabel = "-";
-                            if (turningPoint < 0)
-                            {
-                                turningPoint = i;
-                            }
+                            extremums.Add(i);
                         }
                     }
 
                     {
-                        double noOrderD2F = noOrderModelData[i - 1] + noOrderModelData[i + 1] - 2 * noOrderModelData[i];
-                        if (noOrderD2F > 0)
+                        double d = noOrderModelData[i] - noOrderModelData[i - 1];
+                        double dMinus = noOrderModelData[i - 1] - noOrderModelData[i - 2];
+                        double dPlus = noOrderModelData[i + 1] - noOrderModelData[i];
+                        if (d > dMinus && d > dPlus && !extremums.Contains(i))
                         {
-                            noOrderTurningPoint = -1;
-                        }
-                        else if (noOrderD2F < 0)
-                        {
-                            if (noOrderTurningPoint < 0)
-                            {
-                                noOrderTurningPoint = i;
-                            }
+                            noOrderExtremums.Add(i);
                         }
                     }
                 }
-
-                string ad2FLabel = string.Empty;
-                if (i > 0 && i < actualData.Length - 1)
-                {
-                    double ad2F = actualData[i - 1] + actualData[i + 1] - 2 * actualData[i];
-                    if (ad2F > 0)
-                    {
-                        ad2FLabel = "+";
-                    }
-                    else if (ad2F < 0)
-                    {
-                        ad2FLabel = "-";
-                    }
-                }
-
-                var actualDataPoint = string.Empty;
-                if (i < actualData.Length)
-                {
-                    actualDataPoint = actualData[i].ToString();
-                }
-                // ConsoleWriteLine($"{startDate.AddDays(i).ToShortDateString(),-10} {i,-8} {modelData[i],-24} {Math.Round(modelData[i]),-8} {d2FLabel,-1} {actualDataPoint,-8} {ad2FLabel}");
             }
-            //ConsoleWriteLine();
             ConsoleWriteLine(DateTime.Now.ToShortDateString());
             ConsoleWriteLine($"Error: {error}");
             ConsoleWriteLine(model.ToString(Environment.NewLine));
@@ -296,9 +265,9 @@ namespace COVID
                     var point = modelDailySeries.Points[modelDailySeries.Points.AddXY(i, value)];
                     point.AxisLabel = startDate.AddDays(i).ToShortDateString();
                     point.ToolTip = Math.Round(value).ToString();
-                    if (i == turningPoint)
+                    if (extremums.Contains(i))
                     {
-                        point.Label = point.ToolTip;
+                        point.Label = $"{Math.Round(value)} ({startDate.AddDays(i).ToShortDateString()})";
                     }
                 }
             }
@@ -328,9 +297,9 @@ namespace COVID
                     var point = modelSeries.Points[modelSeries.Points.AddXY(i, modelData[i])];
                     point.AxisLabel = startDate.AddDays(i).ToShortDateString();
                     point.ToolTip = Math.Round(modelData[i]).ToString();
-                    if (i == modelData.Length - 1)
+                    if (i == modelData.Length - 1 || i == actualData.Length - 1)
                     {
-                        point.Label = point.ToolTip;
+                        point.Label = $"{Math.Round(modelData[i])} ({Math.Round(modelData[i] / model.P * 100)}%)";
                     }
                 }
             }
@@ -349,7 +318,11 @@ namespace COVID
                     point.ToolTip = Math.Round(noOrderModelData[i]).ToString();
                     if (i == noOrderModelData.Length - 1)
                     {
-                        point.Label = point.ToolTip;
+                        point.Label = $"{Math.Round(noOrderModelData[i])} ({Math.Round(noOrderModelData[i] / noOrderModel.P * 100)}%)";
+                    }
+                    if (noOrderExtremums.Contains(i))
+                    {
+                        point.Label = startDate.AddDays(i).ToShortDateString();
                     }
                 }
             }
@@ -366,28 +339,6 @@ namespace COVID
                     point.AxisLabel = startDate.AddDays(i).ToShortDateString();
                     point.ToolTip = Math.Round(actualData[i]).ToString();
                 }
-            }
-
-            if (turningPoint >= 0)
-            {
-                var turningPointSeries = chart.Series.Add("Turning point");
-                turningPointSeries.Legend = legend.Name;
-                turningPointSeries.ChartType = SeriesChartType.Point;
-                turningPointSeries.Color = Color.DarkBlue;
-                turningPointSeries.BorderWidth = 9;
-                var point = turningPointSeries.Points[turningPointSeries.Points.AddXY(turningPoint, modelData[turningPoint])];
-                point.Label = point.AxisLabel = startDate.AddDays(turningPoint).ToShortDateString();
-            }
-
-            if (noOrderTurningPoint >= 0)
-            {
-                var noOrderTurningPointSeries = chart.Series.Add("No order turning point");
-                noOrderTurningPointSeries.Legend = legend.Name;
-                noOrderTurningPointSeries.ChartType = SeriesChartType.Point;
-                noOrderTurningPointSeries.Color = Color.DarkBlue;
-                noOrderTurningPointSeries.BorderWidth = 5;
-                var point = noOrderTurningPointSeries.Points[noOrderTurningPointSeries.Points.AddXY(noOrderTurningPoint, noOrderModelData[noOrderTurningPoint])];
-                point.Label = point.AxisLabel = startDate.AddDays(noOrderTurningPoint).ToShortDateString();
             }
 
             {
@@ -661,7 +612,7 @@ namespace COVID
             model.Calculate(results, valuesCache);
             double error = 0;
 
-            var end = actualData.Length;
+            var end = actualData.Length - skip;
 
             for (int i = window; i < end; i++)
             {

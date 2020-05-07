@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.startButton = new System.Windows.Forms.Button();
             this.consoleTextBox = new System.Windows.Forms.TextBox();
@@ -72,6 +72,8 @@
             this.iLabel = new System.Windows.Forms.Label();
             this.windowTextBox = new System.Windows.Forms.TextBox();
             this.windowLabel = new System.Windows.Forms.Label();
+            this.skipTextBox = new System.Windows.Forms.TextBox();
+            this.skipLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.chart)).BeginInit();
             this.SuspendLayout();
             // 
@@ -79,8 +81,8 @@
             // 
             this.chart.BorderlineColor = System.Drawing.Color.Gray;
             this.chart.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea1.Name = "ChartArea1";
-            this.chart.ChartAreas.Add(chartArea1);
+            chartArea3.Name = "ChartArea1";
+            this.chart.ChartAreas.Add(chartArea3);
             this.chart.Location = new System.Drawing.Point(12, 12);
             this.chart.Name = "chart";
             this.chart.Size = new System.Drawing.Size(1724, 682);
@@ -90,10 +92,10 @@
             // 
             // startButton
             // 
-            this.startButton.Location = new System.Drawing.Point(2024, 590);
+            this.startButton.Location = new System.Drawing.Point(2024, 604);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(75, 36);
-            this.startButton.TabIndex = 25;
+            this.startButton.TabIndex = 26;
             this.startButton.Text = "Start";
             this.startButton.UseVisualStyleBackColor = true;
             this.startButton.Click += new System.EventHandler(this.startButton_Click);
@@ -110,10 +112,10 @@
             // 
             // stopButton
             // 
-            this.stopButton.Location = new System.Drawing.Point(2024, 632);
+            this.stopButton.Location = new System.Drawing.Point(2024, 646);
             this.stopButton.Name = "stopButton";
             this.stopButton.Size = new System.Drawing.Size(75, 36);
-            this.stopButton.TabIndex = 26;
+            this.stopButton.TabIndex = 27;
             this.stopButton.Text = "Stop";
             this.stopButton.UseVisualStyleBackColor = true;
             this.stopButton.Click += new System.EventHandler(this.stopButton_Click);
@@ -124,7 +126,7 @@
             this.f0Label.Location = new System.Drawing.Point(1753, 38);
             this.f0Label.Name = "f0Label";
             this.f0Label.Size = new System.Drawing.Size(28, 20);
-            this.f0Label.TabIndex = 4;
+            this.f0Label.TabIndex = 1;
             this.f0Label.Text = "F0";
             // 
             // rLabel
@@ -182,56 +184,56 @@
             this.rMaxTextBox.Location = new System.Drawing.Point(1893, 99);
             this.rMaxTextBox.Name = "rMaxTextBox";
             this.rMaxTextBox.Size = new System.Drawing.Size(100, 26);
-            this.rMaxTextBox.TabIndex = 4;
+            this.rMaxTextBox.TabIndex = 7;
             // 
             // rMinTextBox
             // 
             this.rMinTextBox.Location = new System.Drawing.Point(1787, 99);
             this.rMinTextBox.Name = "rMinTextBox";
             this.rMinTextBox.Size = new System.Drawing.Size(100, 26);
-            this.rMinTextBox.TabIndex = 3;
+            this.rMinTextBox.TabIndex = 6;
             // 
             // oMaxTextBox
             // 
             this.oMaxTextBox.Location = new System.Drawing.Point(1893, 131);
             this.oMaxTextBox.Name = "oMaxTextBox";
             this.oMaxTextBox.Size = new System.Drawing.Size(100, 26);
-            this.oMaxTextBox.TabIndex = 7;
+            this.oMaxTextBox.TabIndex = 10;
             // 
             // oMinTextBox
             // 
             this.oMinTextBox.Location = new System.Drawing.Point(1787, 131);
             this.oMinTextBox.Name = "oMinTextBox";
             this.oMinTextBox.Size = new System.Drawing.Size(100, 26);
-            this.oMinTextBox.TabIndex = 6;
+            this.oMinTextBox.TabIndex = 9;
             // 
             // c1MaxTextBox
             // 
             this.c1MaxTextBox.Location = new System.Drawing.Point(1893, 163);
             this.c1MaxTextBox.Name = "c1MaxTextBox";
             this.c1MaxTextBox.Size = new System.Drawing.Size(100, 26);
-            this.c1MaxTextBox.TabIndex = 10;
+            this.c1MaxTextBox.TabIndex = 13;
             // 
             // c1MinTextBox
             // 
             this.c1MinTextBox.Location = new System.Drawing.Point(1787, 163);
             this.c1MinTextBox.Name = "c1MinTextBox";
             this.c1MinTextBox.Size = new System.Drawing.Size(100, 26);
-            this.c1MinTextBox.TabIndex = 9;
+            this.c1MinTextBox.TabIndex = 12;
             // 
             // pMaxTextBox
             // 
             this.pMaxTextBox.Location = new System.Drawing.Point(1893, 227);
             this.pMaxTextBox.Name = "pMaxTextBox";
             this.pMaxTextBox.Size = new System.Drawing.Size(100, 26);
-            this.pMaxTextBox.TabIndex = 16;
+            this.pMaxTextBox.TabIndex = 19;
             // 
             // pMinTextBox
             // 
             this.pMinTextBox.Location = new System.Drawing.Point(1787, 227);
             this.pMinTextBox.Name = "pMinTextBox";
             this.pMinTextBox.Size = new System.Drawing.Size(100, 26);
-            this.pMinTextBox.TabIndex = 15;
+            this.pMinTextBox.TabIndex = 18;
             // 
             // stepFactorTextBox
             // 
@@ -295,49 +297,49 @@
             this.rStepsTextBox.Location = new System.Drawing.Point(1999, 99);
             this.rStepsTextBox.Name = "rStepsTextBox";
             this.rStepsTextBox.Size = new System.Drawing.Size(100, 26);
-            this.rStepsTextBox.TabIndex = 5;
+            this.rStepsTextBox.TabIndex = 8;
             // 
             // oStepsTextBox
             // 
             this.oStepsTextBox.Location = new System.Drawing.Point(1999, 131);
             this.oStepsTextBox.Name = "oStepsTextBox";
             this.oStepsTextBox.Size = new System.Drawing.Size(100, 26);
-            this.oStepsTextBox.TabIndex = 8;
+            this.oStepsTextBox.TabIndex = 11;
             // 
             // c1StepsTextBox
             // 
             this.c1StepsTextBox.Location = new System.Drawing.Point(1999, 163);
             this.c1StepsTextBox.Name = "c1StepsTextBox";
             this.c1StepsTextBox.Size = new System.Drawing.Size(100, 26);
-            this.c1StepsTextBox.TabIndex = 11;
+            this.c1StepsTextBox.TabIndex = 14;
             // 
             // pStepsTextBox
             // 
             this.pStepsTextBox.Location = new System.Drawing.Point(1999, 227);
             this.pStepsTextBox.Name = "pStepsTextBox";
             this.pStepsTextBox.Size = new System.Drawing.Size(100, 26);
-            this.pStepsTextBox.TabIndex = 17;
+            this.pStepsTextBox.TabIndex = 20;
             // 
             // c2StepsTextBox
             // 
             this.c2StepsTextBox.Location = new System.Drawing.Point(1999, 195);
             this.c2StepsTextBox.Name = "c2StepsTextBox";
             this.c2StepsTextBox.Size = new System.Drawing.Size(100, 26);
-            this.c2StepsTextBox.TabIndex = 14;
+            this.c2StepsTextBox.TabIndex = 17;
             // 
             // c2MaxTextBox
             // 
             this.c2MaxTextBox.Location = new System.Drawing.Point(1893, 195);
             this.c2MaxTextBox.Name = "c2MaxTextBox";
             this.c2MaxTextBox.Size = new System.Drawing.Size(100, 26);
-            this.c2MaxTextBox.TabIndex = 13;
+            this.c2MaxTextBox.TabIndex = 16;
             // 
             // c2MinTextBox
             // 
             this.c2MinTextBox.Location = new System.Drawing.Point(1787, 195);
             this.c2MinTextBox.Name = "c2MinTextBox";
             this.c2MinTextBox.Size = new System.Drawing.Size(100, 26);
-            this.c2MinTextBox.TabIndex = 12;
+            this.c2MinTextBox.TabIndex = 15;
             // 
             // c2Label
             // 
@@ -350,25 +352,25 @@
             // 
             // resetButton
             // 
-            this.resetButton.Location = new System.Drawing.Point(2024, 674);
+            this.resetButton.Location = new System.Drawing.Point(2024, 688);
             this.resetButton.Name = "resetButton";
             this.resetButton.Size = new System.Drawing.Size(75, 36);
-            this.resetButton.TabIndex = 27;
+            this.resetButton.TabIndex = 28;
             this.resetButton.Text = "Reset";
             this.resetButton.UseVisualStyleBackColor = true;
             this.resetButton.Click += new System.EventHandler(this.resetButton_Click);
             // 
             // returnDateTextBox
             // 
-            this.returnDateTextBox.Location = new System.Drawing.Point(1893, 500);
+            this.returnDateTextBox.Location = new System.Drawing.Point(1893, 514);
             this.returnDateTextBox.Name = "returnDateTextBox";
             this.returnDateTextBox.Size = new System.Drawing.Size(100, 26);
-            this.returnDateTextBox.TabIndex = 100;
+            this.returnDateTextBox.TabIndex = 25;
             // 
             // returnDateLabel
             // 
             this.returnDateLabel.AutoSize = true;
-            this.returnDateLabel.Location = new System.Drawing.Point(1793, 503);
+            this.returnDateLabel.Location = new System.Drawing.Point(1793, 517);
             this.returnDateLabel.Name = "returnDateLabel";
             this.returnDateLabel.Size = new System.Drawing.Size(94, 20);
             this.returnDateLabel.TabIndex = 101;
@@ -379,21 +381,21 @@
             this.iMinTextBox.Location = new System.Drawing.Point(1787, 67);
             this.iMinTextBox.Name = "iMinTextBox";
             this.iMinTextBox.Size = new System.Drawing.Size(100, 26);
-            this.iMinTextBox.TabIndex = 102;
+            this.iMinTextBox.TabIndex = 3;
             // 
             // iMaxTextBox
             // 
             this.iMaxTextBox.Location = new System.Drawing.Point(1893, 67);
             this.iMaxTextBox.Name = "iMaxTextBox";
             this.iMaxTextBox.Size = new System.Drawing.Size(100, 26);
-            this.iMaxTextBox.TabIndex = 103;
+            this.iMaxTextBox.TabIndex = 4;
             // 
             // iStepsTextBox
             // 
             this.iStepsTextBox.Location = new System.Drawing.Point(1999, 67);
             this.iStepsTextBox.Name = "iStepsTextBox";
             this.iStepsTextBox.Size = new System.Drawing.Size(100, 26);
-            this.iStepsTextBox.TabIndex = 104;
+            this.iStepsTextBox.TabIndex = 5;
             // 
             // iLabel
             // 
@@ -409,7 +411,7 @@
             this.windowTextBox.Location = new System.Drawing.Point(1893, 399);
             this.windowTextBox.Name = "windowTextBox";
             this.windowTextBox.Size = new System.Drawing.Size(100, 26);
-            this.windowTextBox.TabIndex = 106;
+            this.windowTextBox.TabIndex = 23;
             // 
             // windowLabel
             // 
@@ -420,11 +422,29 @@
             this.windowLabel.TabIndex = 107;
             this.windowLabel.Text = "Window";
             // 
+            // skipTextBox
+            // 
+            this.skipTextBox.Location = new System.Drawing.Point(1893, 432);
+            this.skipTextBox.Name = "skipTextBox";
+            this.skipTextBox.Size = new System.Drawing.Size(100, 26);
+            this.skipTextBox.TabIndex = 24;
+            // 
+            // skipLabel
+            // 
+            this.skipLabel.AutoSize = true;
+            this.skipLabel.Location = new System.Drawing.Point(1847, 435);
+            this.skipLabel.Name = "skipLabel";
+            this.skipLabel.Size = new System.Drawing.Size(40, 20);
+            this.skipLabel.TabIndex = 109;
+            this.skipLabel.Text = "Skip";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2111, 1298);
+            this.Controls.Add(this.skipLabel);
+            this.Controls.Add(this.skipTextBox);
             this.Controls.Add(this.windowLabel);
             this.Controls.Add(this.windowTextBox);
             this.Controls.Add(this.iLabel);
@@ -522,6 +542,8 @@
         private System.Windows.Forms.Label iLabel;
         private System.Windows.Forms.TextBox windowTextBox;
         private System.Windows.Forms.Label windowLabel;
+        private System.Windows.Forms.TextBox skipTextBox;
+        private System.Windows.Forms.Label skipLabel;
     }
 }
 
