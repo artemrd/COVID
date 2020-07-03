@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace COVID
 {
@@ -7,17 +8,14 @@ namespace COVID
     {
         const double dt = 0.001;
 
-        public Model(double f0, double i, double r, DateTime startDate, double orderDay, double c1, double c2, double p, double returnDay)
+        public Model(double f0, double i, double r, DateTime startDate, CFactor[] c, double p)
         {
             this.F0 = f0;
             this.I = i;
             this.R = r;
             this.StartDate = startDate;
-            this.OrderDay = orderDay;
-            this.C1 = c1;
-            this.C2 = c2;
+            this.C = c;
             this.P = p;
-            this.ReturnDay = returnDay;
         }
 
         // Initial value
@@ -32,23 +30,19 @@ namespace COVID
         // Start and 'stay home' order day.
         public DateTime StartDate { get; }
 
-        public double OrderDay { get; }
-
         // Contagiousness
-        public double C1 { get; }
-
-        public double C2 { get; }
+        public CFactor[] C { get; }
 
         // Population
         public double P { get; }
-
-        public double ReturnDay { get; }
 
         public void Calculate(double[] results, List<double> valuesCache)
         {
             valuesCache.Clear();
 
             var currentPoint = 0;
+            var currentCIndex = 0;
+            var currentC = C[currentCIndex];
 
             var i = 0;
             var iShift = (int)Math.Round(I / dt);
@@ -69,18 +63,17 @@ namespace COVID
                     }
                 }
 
+                if (t > currentC.EndDay && currentCIndex < C.Length - 1)
+                {
+                    currentCIndex++;
+                    currentC = C[currentCIndex];
+                }
+
                 int t_i = i - iShift;
                 int t_ri = i - rShift - iShift;
                 double t_iValue = t_i < 0 ? 0 : valuesCache[t_i];
                 double t_riValue = t_ri < 0 ? 0 : valuesCache[t_ri];
-                if (t < OrderDay || (ReturnDay > 0 && t > ReturnDay))
-                {
-                    value = value + C1 * (t_iValue - t_riValue) * (P - value) * dt;
-                }
-                else
-                {
-                    value = value + C2 * (t_iValue - t_riValue) * (P - value) * dt;
-                }
+                value = value + currentC.Value * (t_iValue - t_riValue) * (P - value) * dt;
                 valuesCache.Add(value);
 
                 i++;
@@ -94,15 +87,39 @@ namespace COVID
 
         public string ToString(string separator)
         {
-            return $"F0: {F0}{separator}" +
-                $"I: {I}{separator}" +
-                $"R: {R}{separator}" +
-                $"OrderDate: {this.StartDate.AddDays(Math.Round(OrderDay)).ToShortDateString()} ({OrderDay}){separator}" +
-                $"C1: {C1}{separator}" +
-                $"C2: {C2}{separator}" +
-                $"P: {P}{separator}" +
-                (ReturnDay > 0 ? $"OrderDate: {this.StartDate.AddDays(Math.Round(ReturnDay)).ToShortDateString()} ({ReturnDay}){separator}" : "") +
-                $"bestModel = new Model({F0}, {I}, {R}, startDate, {OrderDay}, {C1}, {C2}, {P}, {ReturnDay});";
+            var sb = new StringBuilder();
+            sb.Append($"F0: {F0}{separator}");
+            sb.Append($"I: {I}{separator}");
+            sb.Append($"R: {R}{separator}");
+            for (int i = 0; i < C.Length; i++)
+            {
+                sb.Append($"C{i}: {C[i].Value}");
+                if (i < C.Length - 1)
+                {
+                    sb.Append($", end date: {this.StartDate.AddDays(Math.Round(C[i].EndDay)).ToShortDateString()}");
+                }
+                sb.Append(separator);
+            }
+            sb.Append($"P: {P}{separator}");
+            //sb.Append($"bestModel = new Model({F0}, {I}, {R}, startDate, {OrderDay}, {C1}, {C2}, {P}, {ReturnDay});");
+            return sb.ToString();
+        }
+    }
+
+    public struct CFactor : IComparable<CFactor>
+    {
+        public double Value;
+        public double EndDay;
+
+        public CFactor(double value, double endDay)
+        {
+            Value = value;
+            EndDay = endDay;
+        }
+
+        public int CompareTo(CFactor other)
+        {
+            return EndDay.CompareTo(other.EndDay);
         }
     }
 }
