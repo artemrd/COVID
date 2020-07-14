@@ -640,6 +640,7 @@ namespace COVID
         {
             model.Calculate(results, valuesCache);
             double error = 0;
+            int count = 0;
 
             var end = actualData.Length - skip;
 
@@ -650,9 +651,17 @@ namespace COVID
                 var diff = value1 - value2;
 
                 error += diff * diff;
+                count += window;
             }
 
-            return error;
+            if (count > 0)
+            {
+                return error / count;
+            }
+            else
+            {
+                return 0;
+            }
         }
 
         private void stopButton_Click(object sender, EventArgs e)
