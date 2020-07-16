@@ -27,7 +27,7 @@ namespace COVID
         ParameterRange pRange;
 
         // Training parameters.
-        double stepFactor;
+        double learningRate;
         double filterFactor;
         int window;
         int skip;
@@ -88,7 +88,7 @@ namespace COVID
             cEndDayRange = new ParameterRange(60, actualDataList.Count, 100000);
             pRange = new ParameterRange(3000, 6000, 100000);
 
-            stepFactor = 10000;
+            learningRate = 10000;
             filterFactor = 2;
             window = 1;
             skip = 0;
@@ -100,7 +100,7 @@ namespace COVID
             cEndDayRange.ToView(cEndDayMinTextBox, cEndDayMaxTextBox, cEndDayStepsTextBox);
             pRange.ToView(pMinTextBox, pMaxTextBox, pStepsTextBox);
 
-            stepFactorTextBox.Text = stepFactor.ToString();
+            learningRateTextBox.Text = learningRate.ToString();
             filterFactorTextBox.Text = filterFactor.ToString();
             windowTextBox.Text = window.ToString();
             skipTextBox.Text = skip.ToString();
@@ -122,17 +122,17 @@ namespace COVID
                 cEndDayRange = new ParameterRange(cEndDayMinTextBox, cEndDayMaxTextBox, cEndDayStepsTextBox);
                 pRange = new ParameterRange(pMinTextBox, pMaxTextBox, pStepsTextBox);
 
-                stepFactor = Convert.ToDouble(stepFactorTextBox.Text);
+                learningRate = Convert.ToDouble(learningRateTextBox.Text);
                 filterFactor = Convert.ToDouble(filterFactorTextBox.Text);
                 window = Convert.ToInt32(windowTextBox.Text);
                 skip = Convert.ToInt32(skipTextBox.Text);
 
-                dF0 = f0Range.Diff / f0Range.Steps * stepFactor;
-                dI = iRange.Diff / iRange.Steps * stepFactor;
-                dR = rRange.Diff / rRange.Steps * stepFactor;
-                dC = cRange.Diff / cRange.Steps * stepFactor;
-                dCEndDay = cEndDayRange.Diff / cEndDayRange.Steps * stepFactor;
-                dP = pRange.Diff / pRange.Steps * stepFactor;
+                dF0 = f0Range.Diff / f0Range.Steps * learningRate;
+                dI = iRange.Diff / iRange.Steps * learningRate;
+                dR = rRange.Diff / rRange.Steps * learningRate;
+                dC = cRange.Diff / cRange.Steps * learningRate;
+                dCEndDay = cEndDayRange.Diff / cEndDayRange.Steps * learningRate;
+                dP = pRange.Diff / pRange.Steps * learningRate;
 
                 DateTime newEndDate;
                 if (DateTime.TryParse(returnDateTextBox.Text, out newEndDate))

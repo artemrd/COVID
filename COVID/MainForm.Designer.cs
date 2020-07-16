@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.startButton = new System.Windows.Forms.Button();
             this.consoleTextBox = new System.Windows.Forms.TextBox();
@@ -45,8 +45,8 @@
             this.cMinTextBox = new System.Windows.Forms.TextBox();
             this.pMaxTextBox = new System.Windows.Forms.TextBox();
             this.pMinTextBox = new System.Windows.Forms.TextBox();
-            this.stepFactorTextBox = new System.Windows.Forms.TextBox();
-            this.stepFactorLabel = new System.Windows.Forms.Label();
+            this.learningRateTextBox = new System.Windows.Forms.TextBox();
+            this.learningRateLabel = new System.Windows.Forms.Label();
             this.filterFactorTextBox = new System.Windows.Forms.TextBox();
             this.filterFactorLabel = new System.Windows.Forms.Label();
             this.trainingParametersLabel = new System.Windows.Forms.Label();
@@ -77,8 +77,8 @@
             // 
             this.chart.BorderlineColor = System.Drawing.Color.Gray;
             this.chart.BorderlineDashStyle = System.Windows.Forms.DataVisualization.Charting.ChartDashStyle.Solid;
-            chartArea2.Name = "ChartArea1";
-            this.chart.ChartAreas.Add(chartArea2);
+            chartArea1.Name = "ChartArea1";
+            this.chart.ChartAreas.Add(chartArea1);
             this.chart.Location = new System.Drawing.Point(12, 12);
             this.chart.Name = "chart";
             this.chart.Size = new System.Drawing.Size(1724, 682);
@@ -208,21 +208,21 @@
             this.pMinTextBox.Size = new System.Drawing.Size(100, 26);
             this.pMinTextBox.TabIndex = 18;
             // 
-            // stepFactorTextBox
+            // learningRateTextBox
             // 
-            this.stepFactorTextBox.Location = new System.Drawing.Point(1926, 276);
-            this.stepFactorTextBox.Name = "stepFactorTextBox";
-            this.stepFactorTextBox.Size = new System.Drawing.Size(100, 26);
-            this.stepFactorTextBox.TabIndex = 21;
+            this.learningRateTextBox.Location = new System.Drawing.Point(1926, 276);
+            this.learningRateTextBox.Name = "learningRateTextBox";
+            this.learningRateTextBox.Size = new System.Drawing.Size(100, 26);
+            this.learningRateTextBox.TabIndex = 21;
             // 
-            // stepFactorLabel
+            // learningRateLabel
             // 
-            this.stepFactorLabel.AutoSize = true;
-            this.stepFactorLabel.Location = new System.Drawing.Point(1832, 279);
-            this.stepFactorLabel.Name = "stepFactorLabel";
-            this.stepFactorLabel.Size = new System.Drawing.Size(88, 20);
-            this.stepFactorLabel.TabIndex = 30;
-            this.stepFactorLabel.Text = "Step factor";
+            this.learningRateLabel.AutoSize = true;
+            this.learningRateLabel.Location = new System.Drawing.Point(1817, 279);
+            this.learningRateLabel.Name = "learningRateLabel";
+            this.learningRateLabel.Size = new System.Drawing.Size(103, 20);
+            this.learningRateLabel.TabIndex = 30;
+            this.learningRateLabel.Text = "Learning rate";
             // 
             // filterFactorTextBox
             // 
@@ -432,8 +432,8 @@
             this.Controls.Add(this.trainingParametersLabel);
             this.Controls.Add(this.filterFactorLabel);
             this.Controls.Add(this.filterFactorTextBox);
-            this.Controls.Add(this.stepFactorLabel);
-            this.Controls.Add(this.stepFactorTextBox);
+            this.Controls.Add(this.learningRateLabel);
+            this.Controls.Add(this.learningRateTextBox);
             this.Controls.Add(this.pMaxTextBox);
             this.Controls.Add(this.pMinTextBox);
             this.Controls.Add(this.cMaxTextBox);
@@ -477,8 +477,8 @@
         private System.Windows.Forms.TextBox cMinTextBox;
         private System.Windows.Forms.TextBox pMaxTextBox;
         private System.Windows.Forms.TextBox pMinTextBox;
-        private System.Windows.Forms.TextBox stepFactorTextBox;
-        private System.Windows.Forms.Label stepFactorLabel;
+        private System.Windows.Forms.TextBox learningRateTextBox;
+        private System.Windows.Forms.Label learningRateLabel;
         private System.Windows.Forms.TextBox filterFactorTextBox;
         private System.Windows.Forms.Label filterFactorLabel;
         private System.Windows.Forms.Label trainingParametersLabel;
