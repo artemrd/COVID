@@ -70,6 +70,8 @@
             this.windowLabel = new System.Windows.Forms.Label();
             this.skipTextBox = new System.Windows.Forms.TextBox();
             this.skipLabel = new System.Windows.Forms.Label();
+            this.kinksLabel = new System.Windows.Forms.Label();
+            this.kinksTextBox = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.chart)).BeginInit();
             this.SuspendLayout();
             // 
@@ -88,7 +90,7 @@
             // 
             // startButton
             // 
-            this.startButton.Location = new System.Drawing.Point(2057, 489);
+            this.startButton.Location = new System.Drawing.Point(2057, 548);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(75, 36);
             this.startButton.TabIndex = 26;
@@ -108,7 +110,7 @@
             // 
             // stopButton
             // 
-            this.stopButton.Location = new System.Drawing.Point(2057, 531);
+            this.stopButton.Location = new System.Drawing.Point(2057, 590);
             this.stopButton.Name = "stopButton";
             this.stopButton.Size = new System.Drawing.Size(75, 36);
             this.stopButton.TabIndex = 27;
@@ -318,7 +320,7 @@
             // 
             // resetButton
             // 
-            this.resetButton.Location = new System.Drawing.Point(2057, 573);
+            this.resetButton.Location = new System.Drawing.Point(2057, 632);
             this.resetButton.Name = "resetButton";
             this.resetButton.Size = new System.Drawing.Size(75, 36);
             this.resetButton.TabIndex = 28;
@@ -328,7 +330,7 @@
             // 
             // returnDateTextBox
             // 
-            this.returnDateTextBox.Location = new System.Drawing.Point(1926, 431);
+            this.returnDateTextBox.Location = new System.Drawing.Point(1926, 490);
             this.returnDateTextBox.Name = "returnDateTextBox";
             this.returnDateTextBox.Size = new System.Drawing.Size(100, 26);
             this.returnDateTextBox.TabIndex = 25;
@@ -336,7 +338,7 @@
             // endDateLabel
             // 
             this.endDateLabel.AutoSize = true;
-            this.endDateLabel.Location = new System.Drawing.Point(1846, 434);
+            this.endDateLabel.Location = new System.Drawing.Point(1846, 493);
             this.endDateLabel.Name = "endDateLabel";
             this.endDateLabel.Size = new System.Drawing.Size(74, 20);
             this.endDateLabel.TabIndex = 101;
@@ -404,11 +406,29 @@
             this.skipLabel.TabIndex = 109;
             this.skipLabel.Text = "Skip";
             // 
+            // kinksLabel
+            // 
+            this.kinksLabel.AutoSize = true;
+            this.kinksLabel.Location = new System.Drawing.Point(1873, 409);
+            this.kinksLabel.Name = "kinksLabel";
+            this.kinksLabel.Size = new System.Drawing.Size(47, 20);
+            this.kinksLabel.TabIndex = 110;
+            this.kinksLabel.Text = "Kinks";
+            // 
+            // kinksTextBox
+            // 
+            this.kinksTextBox.Location = new System.Drawing.Point(1926, 406);
+            this.kinksTextBox.Name = "kinksTextBox";
+            this.kinksTextBox.Size = new System.Drawing.Size(100, 26);
+            this.kinksTextBox.TabIndex = 111;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(2144, 1298);
+            this.Controls.Add(this.kinksTextBox);
+            this.Controls.Add(this.kinksLabel);
             this.Controls.Add(this.skipLabel);
             this.Controls.Add(this.skipTextBox);
             this.Controls.Add(this.windowLabel);
@@ -502,6 +522,8 @@
         private System.Windows.Forms.Label windowLabel;
         private System.Windows.Forms.TextBox skipTextBox;
         private System.Windows.Forms.Label skipLabel;
+        private System.Windows.Forms.Label kinksLabel;
+        private System.Windows.Forms.TextBox kinksTextBox;
     }
 }
 

@@ -31,6 +31,7 @@ namespace COVID
         double filterFactor;
         int window;
         int skip;
+        int kinks;
 
         double dF0;
         double dR;
@@ -39,7 +40,7 @@ namespace COVID
         double dCEndDay;
         double dP;
 
-        const int CCount = 4;
+        //const int CCount = 4;
 
         public MainForm()
         {
@@ -81,17 +82,18 @@ namespace COVID
             var orderDate = DateTime.Parse("03/23/2020");
             var orderDay = (orderDate - startDate).TotalDays;
 
-            f0Range = new ParameterRange(0.01, .3, 10000);
+            f0Range = new ParameterRange(0.01, 10, 100000);
             iRange = new ParameterRange(0, 0, 100000);
-            rRange = new ParameterRange(10, 30, 100000);
-            cRange = new ParameterRange(1E-6, 1E-4, 100000);
+            rRange = new ParameterRange(5, 30, 100000);
+            cRange = new ParameterRange(1E-6, 1E-5, 100000);
             cEndDayRange = new ParameterRange(60, actualDataList.Count, 100000);
-            pRange = new ParameterRange(3000, 6000, 100000);
+            pRange = new ParameterRange(5000, 50000, 100000);
 
             learningRate = 10000;
             filterFactor = 2;
             window = 1;
             skip = 0;
+            kinks = 3;
 
             f0Range.ToView(f0MinTextBox, f0MaxTextBox, f0StepsTextBox);
             iRange.ToView(iMinTextBox, iMaxTextBox, iStepsTextBox);
@@ -104,6 +106,7 @@ namespace COVID
             filterFactorTextBox.Text = filterFactor.ToString();
             windowTextBox.Text = window.ToString();
             skipTextBox.Text = skip.ToString();
+            kinksTextBox.Text = kinks.ToString();
             returnDateTextBox.Text = endDate.ToShortDateString();
 
             SetStop(true);
@@ -126,6 +129,7 @@ namespace COVID
                 filterFactor = Convert.ToDouble(filterFactorTextBox.Text);
                 window = Convert.ToInt32(windowTextBox.Text);
                 skip = Convert.ToInt32(skipTextBox.Text);
+                kinks = Convert.ToInt32(kinksTextBox.Text);
 
                 dF0 = f0Range.Diff / f0Range.Steps * learningRate;
                 dI = iRange.Diff / iRange.Steps * learningRate;
@@ -520,7 +524,7 @@ namespace COVID
 
         private IEnumerable<Model> GetRandomModels()
         {
-            var randomC = new CFactor[CCount];
+            var randomC = new CFactor[kinks + 1];
             for (int i = 0; i < randomC.Length; i++)
             {
                 randomC[i] = new CFactor(cRange.GetRandom(rnd), cEndDayRange.GetRandom(rnd));
