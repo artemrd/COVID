@@ -82,14 +82,14 @@ namespace COVID
             var orderDate = DateTime.Parse("03/23/2020");
             var orderDay = (orderDate - startDate).TotalDays;
 
-            f0Range = new ParameterRange(0.01, 10, 100000);
-            iRange = new ParameterRange(0, 0, 100000);
+            f0Range = new ParameterRange(0.01, 1, 100000);
+            iRange = new ParameterRange(0, 30, 100000);
             rRange = new ParameterRange(5, 30, 100000);
-            cRange = new ParameterRange(1E-6, 1E-5, 100000);
+            cRange = new ParameterRange(1E-6, 2E-5, 100000);
             cEndDayRange = new ParameterRange(60, actualDataList.Count, 100000);
-            pRange = new ParameterRange(5000, 50000, 100000);
+            pRange = new ParameterRange(10000, 50000, 100000);
 
-            learningRate = 10000;
+            learningRate = 1000;
             filterFactor = 2;
             window = 1;
             skip = 0;
@@ -545,18 +545,25 @@ namespace COVID
             if (bestModel != null)
             {
                 var randomization = rnd.NextDouble();
+
+                randomC = new CFactor[bestModel.C.Length];
+                for (int i = 0; i < randomC.Length; i++)
+                {
+                    randomC[i] = rnd.NextDouble() > randomization ? bestModel.C[i] : new CFactor(cRange.GetRandom(rnd), cEndDayRange.GetRandom(rnd));
+                }
+
                 yield return CreateModel(
                     bestModel,
                     rnd.NextDouble() > randomization ? bestModel.F0 : f0Range.GetRandom(rnd),
                     rnd.NextDouble() > randomization ? bestModel.I : iRange.GetRandom(rnd),
                     rnd.NextDouble() > randomization ? bestModel.R : rRange.GetRandom(rnd),
                     startDate,
-                    rnd.NextDouble() > randomization ? bestModel.C : randomC,
+                    randomC,
                     rnd.NextDouble() > randomization ? bestModel.P : pRange.GetRandom(rnd));
 
                 for (int i = 0; i < bestModel.C.Length; i++)
                 {
-                    var randomizedC = Clone(bestModel.C);
+                    var randomizedC = new CFactor[bestModel.C.Length];
                     randomizedC[i] = new CFactor(bestModel.C[i].Value + dC * (1.0 - rnd.NextDouble() * 2), bestModel.C[i].EndDay + dCEndDay * (1.0 - rnd.NextDouble() * 2));
                     yield return CreateModel(
                         bestModel,
@@ -603,10 +610,10 @@ namespace COVID
             yield return CreateModel(model, model.F0, model.I, model.R, model.StartDate, model.C, model.P + dP);
             yield return CreateModel(model, model.F0, model.I, model.R, model.StartDate, model.C, model.P - dP);
 
-            for (int i = 0; i < bestModel.C.Length; i++)
+            for (int i = 0; i < model.C.Length; i++)
             {
-                var randomizedC = Clone(bestModel.C);
-                randomizedC[i] = new CFactor(bestModel.C[i].Value + dC * (1.0 - rnd.NextDouble() * 2), bestModel.C[i].EndDay);
+                var randomizedC = Clone(model.C);
+                randomizedC[i] = new CFactor(model.C[i].Value + dC * (1.0 - rnd.NextDouble() * 2), model.C[i].EndDay);
                 yield return CreateModel(
                     model,
                     model.F0 + dF0 * (1.0 - rnd.NextDouble() * 2),
@@ -616,8 +623,8 @@ namespace COVID
                     randomizedC,
                     model.P + dP * (1.0 - rnd.NextDouble() * 2));
 
-                randomizedC = Clone(bestModel.C);
-                randomizedC[i] = new CFactor(bestModel.C[i].Value, bestModel.C[i].EndDay + dCEndDay * (1.0 - rnd.NextDouble() * 2));
+                randomizedC = Clone(model.C);
+                randomizedC[i] = new CFactor(model.C[i].Value, model.C[i].EndDay + dCEndDay * (1.0 - rnd.NextDouble() * 2));
                 yield return CreateModel(
                     model,
                     model.F0 + dF0 * (1.0 - rnd.NextDouble() * 2),
@@ -627,8 +634,8 @@ namespace COVID
                     randomizedC,
                     model.P + dP * (1.0 - rnd.NextDouble() * 2));
 
-                randomizedC = Clone(bestModel.C);
-                randomizedC[i] = new CFactor(bestModel.C[i].Value + dC * (1.0 - rnd.NextDouble() * 2), bestModel.C[i].EndDay + dCEndDay * (1.0 - rnd.NextDouble() * 2));
+                randomizedC = Clone(model.C);
+                randomizedC[i] = new CFactor(model.C[i].Value + dC * (1.0 - rnd.NextDouble() * 2), model.C[i].EndDay + dCEndDay * (1.0 - rnd.NextDouble() * 2));
                 yield return CreateModel(
                     model,
                     model.F0 + dF0 * (1.0 - rnd.NextDouble() * 2),
@@ -637,6 +644,18 @@ namespace COVID
                     startDate,
                     randomizedC,
                     model.P + dP * (1.0 - rnd.NextDouble() * 2));
+            }
+
+            {
+                var randomizedC = new CFactor[model.C.Length];
+                var randomDC = dC * (1.0 - rnd.NextDouble() * 2);
+
+                for (int i = 0; i < randomizedC.Length; i++)
+                {
+                    randomizedC[i] = new CFactor(model.C[i].Value + randomDC, model.C[i].EndDay);
+                }
+
+                yield return CreateModel(model, model.F0, model.I, model.R, model.StartDate, randomizedC, model.P);
             }
         }
 
