@@ -91,9 +91,9 @@ namespace COVID
 
             learningRate = 1000;
             filterFactor = 2;
-            window = 1;
+            window = 30;
             skip = 0;
-            kinks = 3;
+            kinks = 4;
 
             f0Range.ToView(f0MinTextBox, f0MaxTextBox, f0StepsTextBox);
             iRange.ToView(iMinTextBox, iMaxTextBox, iStepsTextBox);
