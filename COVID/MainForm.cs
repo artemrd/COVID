@@ -82,7 +82,7 @@ namespace COVID
             var orderDate = DateTime.Parse("03/23/2020");
             var orderDay = (orderDate - startDate).TotalDays;
 
-            f0Range = new ParameterRange(0.01, 1, 100000);
+            f0Range = new ParameterRange(1, 5, 100000);
             iRange = new ParameterRange(0, 30, 100000);
             rRange = new ParameterRange(5, 30, 100000);
             cRange = new ParameterRange(1E-6, 2E-5, 100000);
